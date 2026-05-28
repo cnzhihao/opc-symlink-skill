@@ -1,28 +1,36 @@
 ---
 name: opc-symlink-skill
-description: Interview a user, mine workspace context, confirm a public-facing personal narrative, produce structured JSON metadata, and generate a standalone single-page personal homepage or personal card. Use when the user wants an agent to understand who they are, what they do, their products, company, partners, customers, public achievements, positioning, bio, profile, personal introduction, calling card, or personal homepage.
+description: Package an AI builder or one-person-company operator into a public-facing personal homepage. Use when the user wants a packaging interview, positioning help, audience and offer discovery, AI builder profile metadata, product/service promotion, proof-first personal branding, or a standalone homepage generated from workspace context and confirmed public facts.
 ---
 
 # OPC Symlink Skill
 
 ## Overview
 
-Use this skill to help a user turn scattered context and natural-language
-answers into a confirmed public profile, JSON metadata, and a standalone HTML
-personal homepage.
+Use this skill as a packaging consultant for AI builder style OPCs. The goal is
+not to collect a profile form; it is to turn workspace clues and conversation
+into a credible public narrative that promotes the user, their products, and
+their collaboration value.
 
-Always treat workspace memory as unverified raw material. Summarize it as
-hypotheses, ask the user to confirm or correct it, then interview progressively
-until the public-facing profile is coherent and safe to publish.
+Treat workspace memory as unverified raw material. Summarize it as packaging
+hypotheses, ask the user to confirm the direction and public boundary, then
+interview deeply enough to understand who they help, what pain they solve, what
+they can offer, and why a visitor should trust them.
 
 ## Workflow
 
-1. Scan context.
-2. Summarize findings for confirmation.
-3. Interview in short adaptive rounds.
-4. Draft and confirm the metadata.
-5. Render the personal homepage.
-6. Deliver the JSON and HTML path, with any unresolved assumptions.
+1. Scan workspace context and recent memory.
+2. Summarize the inferred public packaging angle as hypotheses.
+3. Run a deep packaging interview using
+   `references/packaging-interview-playbook.md`.
+4. Confirm the positioning, public facts, target audience, offers, and privacy
+   boundary. Do not ask the user to review raw JSON.
+5. Internally create AI builder metadata that follows
+   `references/metadata-schema.md`.
+6. Ask the user to choose a homepage template:
+   `product-led`, `builder-os`, or `proof-first`.
+7. Render the standalone HTML and deliver the HTML path, metadata path, and a
+   short note about assumptions or missing proof.
 
 ## Scan Context
 
@@ -44,75 +52,82 @@ Use scanner output to decide which files to read. Do not read secrets, env
 files, private keys, credential stores, dependency folders, build artifacts, or
 large unrelated files. If a file appears sensitive, ask before using it.
 
-## Confirm Before Interviewing
+## Packaging Interview
 
-Even when strong memory files are found, show a concise confirmation summary
-before asking deeper questions:
+Start by saying what the workspace suggests, using language like:
 
-- "Here is what I infer about you..."
-- "Here is what seems public or product-facing..."
-- "Here is what I am unsure about..."
-- "What should I correct, remove, or keep private?"
+- "I infer that your current public angle might be..."
+- "The strongest product-facing signal seems to be..."
+- "The audience is still unclear to me..."
+- "Before I package this, what should I correct or keep private?"
 
-If no useful files are found, say that the workspace did not provide enough
-personal context and begin the interview from first principles.
+Then interview as a packaging consultant. Ask 2-4 questions per round, make
+judgment calls, and adapt based on the user's answers. Do not ask the user to
+fill fields.
 
-## Interview Style
+Cover these decisions before rendering:
 
-Ask 2-4 questions per round. Prefer natural language over forms. Adapt the next
-questions to the user's answers instead of walking through a rigid checklist.
+- Positioning: how strangers should understand the user in one sentence.
+- Audience: who the homepage should attract and who it should not attract.
+- Pain: what target visitors struggle with now.
+- Transformation: what the user helps them become able to do.
+- Offer: product, advisory, delivery, training, co-building, or another route.
+- Proof: projects, public content, customer outcomes, metrics, testimonials.
+- CTA: default to booking a conversation unless the user chooses otherwise.
+- Boundary: what facts, customers, numbers, or personal details stay private.
 
-Cover these areas over several rounds:
-
-- Identity: name, preferred title, location/timezone if public, languages.
-- Positioning: who the user helps, what they are unusually good at, tone.
-- Work: current role, company, products, services, open-source or public work.
-- Proof: launches, metrics, customer outcomes, notable collaborations.
-- Audience: ideal partners, customers, communities, hiring or investment fit.
-- Offers: what visitors can ask for, buy, join, follow, or collaborate on.
-- Links: website, GitHub, X/Twitter, LinkedIn, email, scheduling, docs.
-- Boundaries: details that must stay private or should be softened.
-- Design: visual mood, language, density, and whether to use a photo/avatar.
-
-Stop interviewing when the profile is specific enough to produce a credible
-homepage. Do not keep asking for optional details if the user has already given
-enough material.
+Stop interviewing when the homepage can make a specific, truthful, and useful
+promise to a visitor. Vague proof is acceptable only if it is phrased as focus,
+direction, or current work rather than achievement.
 
 ## Metadata
 
-Before rendering HTML, create a JSON object that follows
-`references/metadata-schema.md`. Show the user a readable summary first and ask
-for confirmation on public claims, private details, and calls to action.
+Create metadata internally after the user has confirmed the packaging direction
+and public boundary. Follow `references/metadata-schema.md`.
 
-Keep claims truthful. If proof is vague, phrase it as direction or focus rather
-than achievement. Do not invent partners, customers, metrics, logos, titles, or
-credentials.
+Do not show the raw JSON for approval unless the user asks. Instead, summarize
+the public narrative in plain language, then write the JSON yourself.
+
+Keep claims truthful. Do not invent partners, customers, metrics, logos,
+credentials, testimonials, or product maturity. Keep `privacy.exclude` out of
+the rendered homepage.
 
 ## Render Homepage
 
-Save the confirmed metadata as JSON, then render:
+Save the metadata as JSON, then render with the selected template:
 
 ```bash
 node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   metadata.json \
-  personal-homepage.html
+  personal-homepage.html \
+  --template product-led
 ```
 
+Templates:
+
+- `product-led`: product and value proposition first; best default for booking
+  calls and B2B collaboration.
+- `builder-os`: AI builder workbench; emphasizes projects, tools, systems, and
+  experiments.
+- `proof-first`: trust and outcomes first; emphasizes cases, results, and
+  delivery credibility.
+
 The renderer creates a standalone HTML file with embedded CSS and metadata. If
-the user has a frontend repository and asks for integration, adapt the content
-to that stack instead of using the standalone renderer.
+the user asks to integrate with an existing frontend repository, adapt the
+content to that stack instead of using the standalone renderer.
 
 After rendering, inspect the HTML in a browser when practical. Check that text
 does not overflow, links are correct, private content is absent, and the first
-viewport clearly communicates who the user is and why visitors should care.
+viewport makes the audience, value, proof, and CTA clear.
 
 ## Output
 
 Return:
 
-- The final metadata JSON or the path to it.
 - The generated HTML file path.
-- A short note listing assumptions or missing information.
+- The metadata JSON path.
+- The selected template.
+- A short note listing missing proof or assumptions.
 
 Prefer the user's language. If the user writes in Chinese, interview and write
 the homepage in Chinese unless they request another language.

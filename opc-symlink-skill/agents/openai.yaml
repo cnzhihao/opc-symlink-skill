@@ -1,4 +1,4 @@
 interface:
   display_name: "OPC Symlink Skill"
-  short_description: "Interview and build a personal card homepage"
-  default_prompt: "Use $opc-symlink-skill to interview me and create a single-page personal card homepage."
+  short_description: "Package AI builders into personal homepages"
+  default_prompt: "Use $opc-symlink-skill to package me as an AI builder and create a personal homepage."

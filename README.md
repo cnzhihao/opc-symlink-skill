@@ -2,9 +2,9 @@
 
 [简体中文](README.zh-CN.md)
 
-An open-source Codex skill that interviews a user, mines local workspace
-context, confirms public-facing facts, produces structured profile metadata,
-and renders a standalone personal homepage HTML file.
+An open-source skill that interviews an AI builder, mines local workspace
+context, packages the user for a target audience, produces structured profile
+metadata, and renders a standalone personal homepage HTML file.
 
 ## What It Does
 
@@ -12,12 +12,14 @@ and renders a standalone personal homepage HTML file.
   profile/about files, product docs, blog posts, and launch notes.
 - Scans `memory/` and `memories/` folders, limited to files modified in the
   last 3 months.
-- Summarizes discovered context as hypotheses and asks the user to confirm,
-  correct, or remove private details.
-- Runs a progressive natural-language interview about identity, work,
-  products, company, partners, customers, proof, links, and collaboration goals.
-- Produces public profile JSON metadata and a standalone single-page HTML
-  personal card.
+- Summarizes discovered context as packaging hypotheses and asks the user to
+  confirm the direction and public boundary.
+- Runs a deep packaging interview about audience, pain, transformation, offers,
+  products, proof, CTA, and privacy boundaries.
+- Produces AI builder profile metadata and a standalone single-page HTML
+  homepage.
+- Supports three reusable templates: `product-led`, `builder-os`, and
+  `proof-first`.
 
 ## Install
 
@@ -38,6 +40,12 @@ After installation, invoke it with:
 
 ```text
 Use $opc-symlink-skill to interview me and create a single-page personal card homepage.
+```
+
+The renderer can also be called directly:
+
+```bash
+node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
 ```
 
 ## License

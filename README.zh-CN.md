@@ -2,16 +2,17 @@
 
 [English](README.md)
 
-这是一个开源 Codex Skill，用来帮助用户把零散的工作区上下文和自然语言采访内容整理成可信的公开个人资料，并生成结构化 JSON 元数据和一个独立的单页个人主页 HTML。
+这是一个开源 skill，用来帮助 AI builder 型 OPC 从零散的工作区上下文和自然语言采访中提炼公开包装定位，生成结构化 JSON 元数据，并渲染一个独立的单页个人主页 HTML。
 
 ## 它能做什么
 
 - 扫描可能包含用户上下文的文件，例如 `user.md`、`memory.md`、`soul.md`、个人简介、产品文档、博客文章和发布说明。
 - 扫描 `memory/` 和 `memories/` 文件夹，但只读取最近 3 个月修改过的内容。
-- 将扫描到的信息先总结为“待确认线索”，再请用户确认、纠正或删除不适合公开的信息。
-- 通过多轮自然语言采访，逐步了解用户的身份、工作、产品、企业、合作伙伴、客户、公开成果、联系方式和合作诉求。
-- 生成公开可用的个人名片 JSON 元数据。
+- 将扫描到的信息先总结为“包装假设”，再请用户确认包装方向和公开边界。
+- 通过深度包装访谈，挖掘目标客群、痛点、转变、产品、服务、proof、CTA 和隐私边界。
+- 生成 AI builder 个人主页 JSON 元数据。
 - 基于元数据渲染一个可直接打开的单页个人主页 HTML。
+- 支持三套可复用模板：`product-led`、`builder-os`、`proof-first`。
 
 ## 安装
 
@@ -40,14 +41,21 @@ Use $opc-symlink-skill to interview me and create a single-page personal card ho
 使用 $opc-symlink-skill 采访我，并帮我生成个人名片主页。
 ```
 
+也可以直接调用渲染器：
+
+```bash
+node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
+```
+
 ## 工作流程
 
-1. 扫描当前工作区里的上下文线索。
-2. 把扫描结果总结成待确认画像。
-3. 向用户求证哪些内容正确、哪些需要删除或保密。
-4. 进行简短多轮采访，补齐定位、产品、证明、链接和合作信息。
-5. 生成 JSON 元数据。
-6. 渲染独立 HTML 个人主页。
+1. 扫描当前工作区里的上下文线索和最近 3 个月 memory。
+2. 把扫描结果总结成待确认的公开包装假设。
+3. 深入访谈目标客群、痛点、转变、offer、proof、CTA 和隐私边界。
+4. 确认包装方向和公开事实，不让用户审 raw JSON。
+5. 内部生成 AI builder metadata。
+6. 让用户选择 `product-led`、`builder-os` 或 `proof-first` 模板。
+7. 渲染独立 HTML 个人主页。
 
 ## 隐私原则
 
