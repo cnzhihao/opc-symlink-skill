@@ -1,5 +1,7 @@
 # Personal Homepage Builder Skill
 
+[简体中文](README.zh-CN.md)
+
 An open-source Codex skill that interviews a user, mines local workspace
 context, confirms public-facing facts, produces structured profile metadata,
 and renders a standalone personal homepage HTML file.
