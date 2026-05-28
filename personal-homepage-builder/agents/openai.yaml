@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Homepage Builder"
+  short_description: "Interview and build a personal card homepage"
+  default_prompt: "Use $personal-homepage-builder to interview me and create a single-page personal card homepage."
