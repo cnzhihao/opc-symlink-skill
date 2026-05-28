@@ -30,11 +30,12 @@ npx skills add https://github.com/cnzhihao/opc-symlink-skill
 Or ask an AI coding agent to install it:
 
 ```text
-Install the Codex skill from https://github.com/cnzhihao/opc-symlink-skill.
-Place the `personal-homepage-builder` skill folder into my Codex skills
-directory, usually `~/.codex/skills`, and verify that `SKILL.md`,
-`agents/openai.yaml`, `references/metadata-schema.md`, and the scripts are
-present.
+Help me install opc-symlink-skill. Clone
+https://github.com/cnzhihao/opc-symlink-skill to
+~/.claude/skills/opc-symlink-skill, then verify that
+personal-homepage-builder/SKILL.md, personal-homepage-builder/agents/,
+personal-homepage-builder/references/, and personal-homepage-builder/scripts/
+exist.
 ```
 
 After installation, invoke it with:

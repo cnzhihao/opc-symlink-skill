@@ -24,10 +24,12 @@ npx skills add https://github.com/cnzhihao/opc-symlink-skill
 也可以把下面这段提示词交给 AI Coding Agent，让它帮你安装：
 
 ```text
-请从 https://github.com/cnzhihao/opc-symlink-skill 安装这个 Codex skill。
-把仓库里的 `personal-homepage-builder` skill 文件夹放到我的 Codex skills
-目录，通常是 `~/.codex/skills`，并确认 `SKILL.md`、`agents/openai.yaml`、
-`references/metadata-schema.md` 和 scripts 目录都存在。
+帮我安装 opc-symlink-skill。请把
+https://github.com/cnzhihao/opc-symlink-skill 克隆到
+~/.claude/skills/opc-symlink-skill，安装完成后检查
+personal-homepage-builder/SKILL.md、personal-homepage-builder/agents/、
+personal-homepage-builder/references/、personal-homepage-builder/scripts/
+是否存在。
 ```
 
 安装后这样调用：
