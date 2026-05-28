@@ -21,13 +21,23 @@ and renders a standalone personal homepage HTML file.
 
 ## Install
 
-Copy the skill folder into your Codex skills directory:
+Install with the skills CLI:
 
 ```bash
-cp -R personal-homepage-builder ~/.codex/skills/
+npx skills add https://github.com/cnzhihao/opc-symlink-skill
 ```
 
-Then invoke it with:
+Or ask an AI coding agent to install it:
+
+```text
+Install the Codex skill from https://github.com/cnzhihao/opc-symlink-skill.
+Place the `personal-homepage-builder` skill folder into my Codex skills
+directory, usually `~/.codex/skills`, and verify that `SKILL.md`,
+`agents/openai.yaml`, `references/metadata-schema.md`, and the scripts are
+present.
+```
+
+After installation, invoke it with:
 
 ```text
 Use $personal-homepage-builder to interview me and create a single-page personal card homepage.

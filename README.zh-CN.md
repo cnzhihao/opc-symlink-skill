@@ -15,13 +15,22 @@
 
 ## 安装
 
-将 skill 文件夹复制到 Codex skills 目录：
+使用 skills CLI 安装：
 
 ```bash
-cp -R personal-homepage-builder ~/.codex/skills/
+npx skills add https://github.com/cnzhihao/opc-symlink-skill
 ```
 
-然后这样调用：
+也可以把下面这段提示词交给 AI Coding Agent，让它帮你安装：
+
+```text
+请从 https://github.com/cnzhihao/opc-symlink-skill 安装这个 Codex skill。
+把仓库里的 `personal-homepage-builder` skill 文件夹放到我的 Codex skills
+目录，通常是 `~/.codex/skills`，并确认 `SKILL.md`、`agents/openai.yaml`、
+`references/metadata-schema.md` 和 scripts 目录都存在。
+```
+
+安装后这样调用：
 
 ```text
 Use $personal-homepage-builder to interview me and create a single-page personal card homepage.
