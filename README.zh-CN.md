@@ -27,21 +27,21 @@ npx skills add https://github.com/cnzhihao/opc-symlink-skill
 帮我安装 opc-symlink-skill。请把
 https://github.com/cnzhihao/opc-symlink-skill 克隆到
 ~/.claude/skills/opc-symlink-skill，安装完成后检查
-personal-homepage-builder/SKILL.md、personal-homepage-builder/agents/、
-personal-homepage-builder/references/、personal-homepage-builder/scripts/
+opc-symlink-skill/SKILL.md、opc-symlink-skill/agents/、
+opc-symlink-skill/references/、opc-symlink-skill/scripts/
 是否存在。
 ```
 
 安装后这样调用：
 
 ```text
-Use $personal-homepage-builder to interview me and create a single-page personal card homepage.
+Use $opc-symlink-skill to interview me and create a single-page personal card homepage.
 ```
 
 也可以用中文提出需求：
 
 ```text
-使用 $personal-homepage-builder 采访我，并帮我生成个人名片主页。
+使用 $opc-symlink-skill 采访我，并帮我生成个人名片主页。
 ```
 
 ## 工作流程

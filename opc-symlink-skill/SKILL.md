@@ -1,9 +1,9 @@
 ---
-name: personal-homepage-builder
+name: opc-symlink-skill
 description: Interview a user, mine workspace context, confirm a public-facing personal narrative, produce structured JSON metadata, and generate a standalone single-page personal homepage or personal card. Use when the user wants an agent to understand who they are, what they do, their products, company, partners, customers, public achievements, positioning, bio, profile, personal introduction, calling card, or personal homepage.
 ---
 
-# Personal Homepage Builder
+# OPC Symlink Skill
 
 ## Overview
 
@@ -29,7 +29,7 @@ until the public-facing profile is coherent and safe to publish.
 Run the scanner from the current workspace unless the user points elsewhere:
 
 ```bash
-node /path/to/personal-homepage-builder/scripts/scan-context.mjs . --json
+node /path/to/opc-symlink-skill/scripts/scan-context.mjs . --json
 ```
 
 Look especially for files named like `user.md`, `memory.md`, `soul.md`,
@@ -93,7 +93,7 @@ credentials.
 Save the confirmed metadata as JSON, then render:
 
 ```bash
-node /path/to/personal-homepage-builder/scripts/render-homepage.mjs \
+node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   metadata.json \
   personal-homepage.html
 ```
