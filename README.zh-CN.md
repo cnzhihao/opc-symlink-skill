@@ -18,18 +18,14 @@
 使用 skills CLI 安装：
 
 ```bash
-npx skills add https://github.com/cnzhihao/opc-symlink-skill
+npx skills add cnzhihao/opc-symlink-skill -y -g
 ```
 
-也可以把下面这段提示词交给 AI Coding Agent，让它帮你安装：
+也可以把下面这段提示词交给 AI Coding Agent，让它用非交互方式安装：
 
 ```text
-帮我安装 opc-symlink-skill。请把
-https://github.com/cnzhihao/opc-symlink-skill 克隆到
-~/.claude/skills/opc-symlink-skill，安装完成后检查
-opc-symlink-skill/SKILL.md、opc-symlink-skill/agents/、
-opc-symlink-skill/references/、opc-symlink-skill/scripts/
-是否存在。
+帮我安装 opc-symlink-skill，请执行：
+npx skills add cnzhihao/opc-symlink-skill -y -g
 ```
 
 安装后这样调用：
