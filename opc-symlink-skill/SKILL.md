@@ -29,9 +29,10 @@ they can offer, and why a visitor should trust them.
    `references/metadata-schema.md`.
 6. Ask the user to choose a homepage template:
    `product-led`, `builder-os`, or `proof-first`.
-7. For multilingual homepages, write Chinese and English copy separately under
-   `locales.zh-CN` and `locales.en`. Do not mix languages in the same visible
-   copy block.
+7. Generate bilingual metadata by default: write Chinese and English copy
+   separately under `locales.zh-CN` and `locales.en`. Only skip bilingual
+   metadata if the user explicitly asks for a single-language homepage. Do not
+   mix languages in the same visible copy block.
 8. Render the standalone HTML and deliver the HTML path, metadata path, and a
    short note about assumptions or missing proof.
 
@@ -99,10 +100,11 @@ Keep claims truthful. Do not invent partners, customers, metrics, logos,
 credentials, testimonials, or product maturity. Keep `privacy.exclude` out of
 the rendered homepage.
 
-For multilingual output, create two localized metadata entries: `locales.zh-CN`
-and `locales.en`. Translate the user's positioning, audience, offers, proof,
-CTA, and navigation-facing copy into each language. Keep shared links, colors,
+Create two localized metadata entries by default: `locales.zh-CN` and
+`locales.en`. Translate the user's positioning, audience, offers, proof, CTA,
+and navigation-facing copy into each language. Keep shared links, colors,
 template choice, and privacy rules at the top level when they are identical.
+Only create single-language metadata when the user explicitly asks for it.
 
 ## Render Homepage
 
@@ -132,9 +134,10 @@ When the user asks for changes, update the metadata JSON and run the renderer
 again as a separate command. Do not edit generated HTML directly and do not
 combine metadata writing plus rendering in one complex shell command.
 
-If metadata includes `locales.zh-CN` and `locales.en`, the renderer creates one
-HTML file with an in-page language switcher. If metadata only has one locale,
-the renderer still localizes template UI labels based on `locale`.
+Because the default metadata should include `locales.zh-CN` and `locales.en`,
+the renderer normally creates one HTML file with an in-page language switcher.
+If the user explicitly requested a single-language page and metadata only has
+one locale, the renderer still localizes template UI labels based on `locale`.
 
 Keep only one final HTML file. Reuse and overwrite the same output path, such
 as `personal-homepage.html`, for every revision. Do not create `v2`, `new`,

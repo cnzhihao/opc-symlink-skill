@@ -13,7 +13,7 @@
 - 生成 AI builder 个人主页 JSON 元数据。
 - 基于元数据渲染一个可直接打开的单页个人主页 HTML。
 - 支持三套可复用模板：`product-led`、`builder-os`、`proof-first`。
-- 当 metadata 提供 `locales.zh-CN` 和 `locales.en` 时，在一个 HTML 文件里生成中英双语版本，并提供语言切换。
+- 默认生成中英双语版本：metadata 使用 `locales.zh-CN` 和 `locales.en`，最终仍然只输出一个带语言切换的 HTML 文件。
 
 ## 安装
 
@@ -54,7 +54,7 @@ node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html -
 2. 把扫描结果总结成待确认的公开包装假设。
 3. 深入访谈目标客群、痛点、转变、offer、proof、CTA 和隐私边界。
 4. 确认包装方向和公开事实，不让用户审 raw JSON。
-5. 内部生成 AI builder metadata。
+5. 内部生成 AI builder metadata，默认包含 `locales.zh-CN` 和 `locales.en` 两套内容。
 6. 让用户选择 `product-led`、`builder-os` 或 `proof-first` 模板。
 7. 渲染独立 HTML 个人主页。
 

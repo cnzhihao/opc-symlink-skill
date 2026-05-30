@@ -7,9 +7,11 @@ Use these rules whenever creating or revising a homepage.
 Metadata JSON is the source of truth. Generated HTML is a disposable build
 artifact.
 
-For bilingual pages, keep both languages in the same metadata file under
-`locales.zh-CN` and `locales.en`. The renderer should still write exactly one
-HTML file.
+Create bilingual pages by default. Keep both languages in the same metadata
+file under `locales.zh-CN` and `locales.en`. The renderer should still write
+exactly one HTML file.
+
+Only produce a single-language page if the user explicitly asks for one.
 
 Keep exactly one final HTML file for the homepage. Re-render into the same
 output path every time. Do not create timestamped, numbered, "final", "new", or
@@ -27,8 +29,8 @@ style changes:
 Do not hand-edit generated HTML. Manual HTML edits will be overwritten by the
 next render and can make future revisions fail.
 
-Do not manually translate generated HTML. Translate the metadata entries and
-rerun the renderer.
+Do not manually translate generated HTML. Translate the metadata entries in
+both `locales.zh-CN` and `locales.en`, then rerun the renderer.
 
 ## Command Discipline
 

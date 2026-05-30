@@ -8,8 +8,9 @@ packaging direction and public boundary, not the raw JSON.
 
 Language rules:
 
-- Generate Chinese and English content as two separate metadata sets when the
-  user wants a multilingual homepage.
+- Generate Chinese and English content as two separate metadata sets by default.
+- Only omit one language when the user explicitly asks for a single-language
+  homepage.
 - Put shared non-language-specific data at the top level.
 - Put localized copy under `locales.zh-CN` and `locales.en`.
 - Do not mix Chinese content with English template labels. The renderer
@@ -169,8 +170,11 @@ Language rules:
 Validation rules:
 
 - Require `identity.name`, `positioning.headline`, and `positioning.summary`.
-- For multilingual homepages, require these fields inside each localized entry
-  in `locales`.
+- Require `locales.zh-CN` and `locales.en` by default. For explicit
+  single-language homepages, require `identity.name`, `positioning.headline`,
+  and `positioning.summary` in the single metadata object.
+- For bilingual homepages, require `identity.name`, `positioning.headline`, and
+  `positioning.summary` inside each localized entry in `locales`.
 - Prefer `cta.primary` for booking a conversation unless the user chooses
   another conversion goal.
 - Use arrays for repeatable content, even when there is only one item.

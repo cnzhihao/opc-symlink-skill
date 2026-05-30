@@ -20,8 +20,8 @@ metadata, and renders a standalone personal homepage HTML file.
   homepage.
 - Supports three reusable templates: `product-led`, `builder-os`, and
   `proof-first`.
-- Supports bilingual Chinese/English output in one HTML file when metadata
-  includes `locales.zh-CN` and `locales.en`.
+- Generates bilingual Chinese/English output by default in one HTML file using
+  `locales.zh-CN` and `locales.en`.
 
 ## Install
 
