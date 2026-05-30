@@ -177,6 +177,7 @@ p { color: var(--muted); margin: 0; }
 .button.ghost {
   background: #fff;
   border: 1px solid var(--line);
+  color: var(--ink);
 }
 .pills {
   display: flex;
@@ -284,6 +285,7 @@ section {
 }
 .cta-band p { color: #d6dbe4; }
 .cta-band .button.primary { background: #fff; color: var(--ink); }
+.cta-band .button.ghost { background: #fff; color: var(--ink); }
 .footer {
   color: var(--muted);
   font-size: 13px;

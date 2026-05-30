@@ -177,8 +177,8 @@ function renderMultilingualHtml(pages) {
   min-height: 36px;
   border-radius: 999px;
   border: 1px solid var(--line, #e5e7eb);
-  background: var(--paper, #ffffff);
-  color: var(--ink, #111827);
+  background: #ffffff;
+  color: #111827;
   font: inherit;
   font-size: 13px;
   font-weight: 800;

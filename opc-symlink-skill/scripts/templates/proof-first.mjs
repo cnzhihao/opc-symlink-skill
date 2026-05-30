@@ -178,6 +178,7 @@ p { color: var(--muted); margin: 0; }
 .button.ghost {
   background: #fff;
   border: 1px solid var(--line);
+  color: var(--ink);
 }
 .pills {
   display: flex;
@@ -298,6 +299,7 @@ ul {
 }
 .cta-panel p { color: #d7e3df; }
 .cta-panel .button.primary { background: #fff; color: var(--ink); }
+.cta-panel .button.ghost { background: #fff; color: var(--ink); }
 .footer {
   color: var(--muted);
   font-size: 13px;
