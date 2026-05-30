@@ -9,6 +9,10 @@ import {
   normalizeMetadata,
   normalizeTemplateName,
 } from './lib/html.mjs';
+import {
+  formatCopyLimitErrors,
+  validateMetadataCopy,
+} from './lib/copy-limits.mjs';
 import { renderBuilderOs } from './templates/builder-os.mjs';
 import { renderProductLed } from './templates/product-led.mjs';
 import { renderProofFirst } from './templates/proof-first.mjs';
@@ -84,6 +88,15 @@ const localizedInputs = localizedRawMetadata(rawMetadata);
 const localizedMetadata = localizedInputs.map((item) => {
   return normalizeMetadata(item.raw);
 });
+const copyErrors = localizedMetadata.flatMap((metadata) => {
+  return validateMetadataCopy(metadata);
+});
+
+if (copyErrors.length) {
+  console.error(formatCopyLimitErrors(copyErrors));
+  process.exit(1);
+}
+
 const selectedTemplate = normalizeTemplateName(
   template || localizedMetadata[0]?.style.template,
 );
@@ -177,6 +190,18 @@ function renderMultilingualHtml(pages) {
   color: #fff;
 }
 .localized-page[hidden] { display: none !important; }
+@media (max-width: 520px) {
+  .language-switcher {
+    right: 10px;
+    top: 10px;
+    gap: 6px;
+  }
+  .language-button {
+    min-height: 32px;
+    font-size: 12px;
+    padding: 0 9px;
+  }
+}
   </style>
   <script type="application/ld+json">${jsonLd}</script>
 </head>

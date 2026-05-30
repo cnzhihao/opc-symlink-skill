@@ -11,6 +11,7 @@
 - 将扫描到的信息先总结为“包装假设”，再请用户确认包装方向和公开边界。
 - 通过深度包装访谈，挖掘目标客群、痛点、转变、产品、服务、proof、CTA 和隐私边界。
 - 生成 AI builder 个人主页 JSON 元数据。
+- 对 headline、CTA、卡片、列表、关键词等可见文案做长度硬校验，超长时要求修改 metadata。
 - 基于元数据渲染一个可直接打开的单页个人主页 HTML。
 - 渲染后用校验脚本确认 HTML 确实来自 bundled mjs renderer，而不是手写或手改。
 - 支持三套可复用模板：`product-led`、`builder-os`、`proof-first`。
@@ -53,6 +54,9 @@ node opc-symlink-skill/scripts/verify-homepage.mjs metadata.json homepage.html
 渲染器默认会拒绝单语 metadata。只有当用户明确要求单语页面时，才使用
 `--single-language`，并把同样的参数传给校验脚本。
 
+渲染器也会拒绝超长可见文案和英文页面里的中文内容。请先压缩或翻译
+metadata，再重新渲染。
+
 ## 工作流程
 
 1. 扫描当前工作区里的上下文线索和最近 3 个月 memory。
@@ -60,8 +64,9 @@ node opc-symlink-skill/scripts/verify-homepage.mjs metadata.json homepage.html
 3. 深入访谈目标客群、痛点、转变、offer、proof、CTA 和隐私边界。
 4. 确认包装方向和公开事实，不让用户审 raw JSON。
 5. 内部生成 AI builder metadata，默认包含 `locales.zh-CN` 和 `locales.en` 两套内容。
-6. 让用户选择 `product-led`、`builder-os` 或 `proof-first` 模板。
-7. 渲染独立 HTML 个人主页，并运行校验脚本确认输出来自 mjs renderer。
+6. 压缩 metadata 文案，确保 CTA、标题、卡片和列表内容符合长度预算。
+7. 让用户选择 `product-led`、`builder-os` 或 `proof-first` 模板。
+8. 渲染独立 HTML 个人主页，并运行校验脚本确认输出来自 mjs renderer。
 
 ## 隐私原则
 

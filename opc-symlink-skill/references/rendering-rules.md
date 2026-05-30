@@ -22,16 +22,22 @@ When the user requests content, wording, link, offer, proof, audience, CTA, or
 style changes:
 
 1. Update the metadata JSON.
-2. Run `scripts/render-homepage.mjs` with the same output HTML path.
-3. Run `scripts/verify-homepage.mjs` against the metadata and HTML.
-4. Inspect the generated HTML if practical.
-5. Return the metadata path, HTML path, template, and verification result.
+2. Shorten or translate visible copy until it fits
+   `references/metadata-schema.md` copy budgets.
+3. Run `scripts/render-homepage.mjs` with the same output HTML path.
+4. Run `scripts/verify-homepage.mjs` against the metadata and HTML.
+5. Inspect the generated HTML if practical.
+6. Return the metadata path, HTML path, template, and verification result.
 
 Do not hand-edit generated HTML. Manual HTML edits will be overwritten by the
 next render and can make future revisions fail.
 
 Do not manually translate generated HTML. Translate the metadata entries in
 both `locales.zh-CN` and `locales.en`, then rerun the renderer.
+
+Do not let long copy overflow the template. CTA labels must be short actions;
+long explanations belong in `cta.note`. If copy validation fails, edit metadata
+and render again.
 
 Do not create HTML as a fallback if rendering fails. Fix the metadata, template
 argument, language structure, or output path, then rerun the bundled renderer
@@ -90,6 +96,8 @@ delivery.
   only when the user explicitly requested a single-language page.
 - If rendering fails with a missing required field, update metadata fields:
   `identity.name`, `positioning.headline`, or `positioning.summary`.
+- If rendering fails with metadata copy validation, shorten the named field or
+  translate English locale text that still contains Chinese copy.
 - If verification fails because the renderer marker is missing, regenerate HTML
   with `scripts/render-homepage.mjs`; do not patch the HTML.
 - If verification fails because multiple generated HTML files exist, remove

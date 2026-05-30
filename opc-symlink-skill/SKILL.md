@@ -52,7 +52,11 @@ hand as a fallback.
    separately under `locales.zh-CN` and `locales.en`. Only skip bilingual
    metadata if the user explicitly asks for a single-language homepage. Do not
    mix languages in the same visible copy block.
-8. Render and verify the standalone HTML using the bundled scripts, then
+8. Compress visible metadata copy to the display budgets in
+   `references/metadata-schema.md`. Long CTA labels, headlines, cards, pills,
+   and list items will fail rendering; shorten metadata instead of relying on
+   the HTML to absorb long text.
+9. Render and verify the standalone HTML using the bundled scripts, then
    deliver the HTML path, metadata path, selected template, verification result,
    and a short note about assumptions or missing proof.
 
@@ -126,6 +130,11 @@ and navigation-facing copy into each language. Keep shared links, colors,
 template choice, and privacy rules at the top level when they are identical.
 Only create single-language metadata when the user explicitly asks for it.
 
+Before rendering, make metadata concise enough for the selected templates. Use
+short CTA labels such as "预约沟通" or "Book a call"; put explanation in
+`cta.note`. English locale copy must be English or transliterated, not Chinese
+sentences mixed into English template labels.
+
 ## Render Homepage
 
 Save the metadata as JSON, then render with the selected template:
@@ -162,6 +171,10 @@ When the user asks for changes, update the metadata JSON and run the renderer
 again as a separate command, then run the verifier. Do not edit generated HTML
 directly and do not combine metadata writing plus rendering in one complex shell
 command.
+
+If rendering fails with metadata copy validation errors, shorten or translate
+the metadata fields named in the error output, then run render and verify again.
+Do not bypass this by editing HTML or by letting long copy overflow.
 
 Because the default metadata should include `locales.zh-CN` and `locales.en`,
 the renderer normally creates one HTML file with an in-page language switcher.

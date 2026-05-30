@@ -42,6 +42,7 @@ const labelSets = {
     builderStack: 'Builder stack',
     capabilities: 'Capabilities',
     cases: 'Cases',
+    collaborationInterfaces: 'Collaboration interfaces',
     currentBuilds: 'Current builds',
     defaultAudience: 'AI builders and operators who need leverage.',
     defaultAudienceBuilderOs: 'Teams and founders building with AI.',
@@ -73,6 +74,7 @@ const labelSets = {
     productsInMotion: 'Products and systems in motion.',
     proof: 'Proof',
     proofFirstProfile: 'Proof-led profile',
+    proofSignals: 'Public signals',
     proofSummary: 'Proof summary',
     publicArtifacts: 'Public artifacts and tools.',
     publicItem: 'Public item',
@@ -103,6 +105,7 @@ const labelSets = {
     builderStack: '构建栈',
     capabilities: '能力',
     cases: '案例',
+    collaborationInterfaces: '合作接口',
     currentBuilds: '正在构建',
     defaultAudience: '需要 AI 杠杆的创造者和运营者。',
     defaultAudienceBuilderOs: '正在用 AI 构建产品的团队和创始人。',
@@ -129,6 +132,7 @@ const labelSets = {
     productsInMotion: '正在推进的产品和系统。',
     proof: '可信证明',
     proofFirstProfile: '可信证明优先',
+    proofSignals: '公开信号',
     proofSummary: '可信信号',
     publicArtifacts: '公开作品和工具。',
     publicItem: '公开内容',
@@ -390,6 +394,12 @@ export function renderPills(items = []) {
     .join('');
 }
 
+export function renderPillList(items = []) {
+  const pills = renderPills(items);
+
+  return pills ? `<div class="pills">${pills}</div>` : '';
+}
+
 export function renderList(items = []) {
   const list = asArray(items);
 
@@ -413,19 +423,23 @@ export function renderNamedCards(items = [], options = {}) {
         item.name || item.title || options.fallbackTitle || labelsFor().item,
       );
       const eyebrow = item.status || item.type || item.audience || '';
-      const body =
+      const rawBody =
         item.value ||
         item.outcome ||
         item.description ||
         item.result ||
         item.problem ||
         '';
+      const plainTitle = item.name || item.title || options.fallbackTitle || '';
+      const body = String(rawBody || '').trim() === String(plainTitle || '').trim()
+        ? ''
+        : rawBody;
       const url = safeUrl(item.url || '');
       const titleHtml = url
         ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${title}</a>`
         : title;
 
-      return `<article class="card">${eyebrow ? `<p class="eyebrow">${escapeHtml(eyebrow)}</p>` : ''}<h3>${titleHtml}</h3><p>${escapeHtml(body)}</p></article>`;
+      return `<article class="card">${eyebrow ? `<p class="eyebrow">${escapeHtml(eyebrow)}</p>` : ''}<h3>${titleHtml}</h3>${body ? `<p>${escapeHtml(body)}</p>` : ''}</article>`;
     })
     .join('');
 }

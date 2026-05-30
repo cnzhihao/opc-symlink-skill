@@ -16,6 +16,8 @@ metadata, and renders a standalone personal homepage HTML file.
   confirm the direction and public boundary.
 - Runs a deep packaging interview about audience, pain, transformation, offers,
   products, proof, CTA, and privacy boundaries.
+- Enforces copy-length budgets for visible metadata fields such as headlines,
+  CTA labels, cards, lists, and keywords.
 - Produces AI builder profile metadata and a standalone single-page HTML
   homepage.
 - Verifies that the HTML came from the bundled mjs renderer instead of manual
@@ -56,6 +58,9 @@ node opc-symlink-skill/scripts/verify-homepage.mjs metadata.json homepage.html
 Single-language metadata is rejected by default. Use `--single-language` only
 when the user explicitly requests a single-language page, and pass the same flag
 to the verifier.
+
+The renderer also rejects overlong visible copy and Chinese text inside the
+English locale. Shorten or translate metadata, then render again.
 
 ## License
 

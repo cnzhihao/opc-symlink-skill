@@ -15,6 +15,38 @@ Language rules:
 - Put localized copy under `locales.zh-CN` and `locales.en`.
 - Do not mix Chinese content with English template labels. The renderer
   localizes template UI by locale.
+- English locale visible copy must not contain Chinese sentences. Translate or
+  transliterate names, products, proof, offers, and audience text.
+
+Visible copy budgets:
+
+| Field | Chinese limit | English limit |
+| --- | ---: | ---: |
+| `identity.name` | 12 | 28 |
+| `identity.title` | 18 | 40 |
+| `positioning.headline` | 28 | 70 |
+| `positioning.tagline` | 20 | 56 |
+| `positioning.summary` | 90 | 180 |
+| `positioning.differentiator` | 50 | 120 |
+| `audience.primary` | 28 | 70 |
+| `audience.painPoints[]` | 26 | 80 |
+| `audience.desiredOutcomes[]` | 26 | 80 |
+| `audience.notFor[]` | 24 | 70 |
+| `transformation.from/to/mechanism` | 36 | 90 |
+| `offers[].name` | 18 | 46 |
+| `offers[].outcome/description` | 36 | 90 |
+| `products[].name` | 18 | 46 |
+| `products[].value/description` | 36 | 90 |
+| `proof.cases[].name` | 20 | 52 |
+| `proof.cases[].problem/result` | 34 | 90 |
+| `proof.publicProjects[]/credibility[]/metrics[]` | 30 | 90 |
+| `cta.primary.label` | 8 | 22 |
+| `cta.secondary.label` | 8 | 22 |
+| `cta.note` | 36 | 90 |
+| `positioning.keywords[]` | 12 | 28 |
+
+If a field is too long, rewrite metadata before rendering. Do not rely on HTML
+wrapping or truncation to fix overlong copy.
 
 ```json
 {
@@ -180,6 +212,8 @@ Validation rules:
 - Use arrays for repeatable content, even when there is only one item.
 - Store only user-confirmed public facts in `proof.cases`, `proof.metrics`,
   `proof.testimonials`, and `proof.credibility`.
+- Keep visible copy within the budgets above. The renderer and verifier fail
+  hard on overlong copy instead of truncating it.
 - Keep `privacy.exclude` and `privacy.approvalNotes` out of rendered HTML.
 - Legacy metadata with `work.products`, `work.services`,
   `proof.publicHighlights`, and top-level `links` may be rendered as fallback,
