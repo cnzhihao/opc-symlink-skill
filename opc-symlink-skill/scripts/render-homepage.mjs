@@ -75,6 +75,14 @@ if (!render) {
 
 const html = render(metadata);
 const resolvedOutput = path.resolve(outputPath);
+const resolvedInput = path.resolve(inputPath);
+
+if (resolvedInput === resolvedOutput) {
+  console.error(
+    'Refusing to overwrite input metadata. Use separate metadata JSON and output HTML paths.',
+  );
+  process.exit(1);
+}
 
 fs.writeFileSync(resolvedOutput, html);
 console.log(resolvedOutput);

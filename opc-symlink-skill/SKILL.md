@@ -32,6 +32,10 @@ they can offer, and why a visitor should trust them.
 7. Render the standalone HTML and deliver the HTML path, metadata path, and a
    short note about assumptions or missing proof.
 
+Source-of-truth rule: only modify metadata JSON when changing homepage content.
+Treat generated HTML as a disposable build artifact. Do not hand-edit generated
+HTML.
+
 ## Scan Context
 
 Run the scanner from the current workspace unless the user points elsewhere:
@@ -103,6 +107,9 @@ node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   --template product-led
 ```
 
+Read `references/rendering-rules.md` before modifying an existing generated
+homepage.
+
 Templates:
 
 - `product-led`: product and value proposition first; best default for booking
@@ -112,8 +119,12 @@ Templates:
 - `proof-first`: trust and outcomes first; emphasizes cases, results, and
   delivery credibility.
 
-The renderer creates a standalone HTML file with embedded CSS and metadata. If
-the user asks to integrate with an existing frontend repository, adapt the
+The renderer creates a standalone HTML file with embedded CSS and metadata.
+When the user asks for changes, update the metadata JSON and run the renderer
+again as a separate command. Do not edit generated HTML directly and do not
+combine metadata writing plus rendering in one complex shell command.
+
+If the user asks to integrate with an existing frontend repository, adapt the
 content to that stack instead of using the standalone renderer.
 
 After rendering, inspect the HTML in a browser when practical. Check that text
