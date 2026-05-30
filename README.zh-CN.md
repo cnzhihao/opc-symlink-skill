@@ -12,6 +12,7 @@
 - 通过深度包装访谈，挖掘目标客群、痛点、转变、产品、服务、proof、CTA 和隐私边界。
 - 生成 AI builder 个人主页 JSON 元数据。
 - 基于元数据渲染一个可直接打开的单页个人主页 HTML。
+- 渲染后用校验脚本确认 HTML 确实来自 bundled mjs renderer，而不是手写或手改。
 - 支持三套可复用模板：`product-led`、`builder-os`、`proof-first`。
 - 默认生成中英双语版本：metadata 使用 `locales.zh-CN` 和 `locales.en`，最终仍然只输出一个带语言切换的 HTML 文件。
 
@@ -46,10 +47,11 @@ Use $opc-symlink-skill to interview me and create a single-page personal card ho
 
 ```bash
 node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
+node opc-symlink-skill/scripts/verify-homepage.mjs metadata.json homepage.html
 ```
 
 渲染器默认会拒绝单语 metadata。只有当用户明确要求单语页面时，才使用
-`--single-language`。
+`--single-language`，并把同样的参数传给校验脚本。
 
 ## 工作流程
 
@@ -59,7 +61,7 @@ node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html -
 4. 确认包装方向和公开事实，不让用户审 raw JSON。
 5. 内部生成 AI builder metadata，默认包含 `locales.zh-CN` 和 `locales.en` 两套内容。
 6. 让用户选择 `product-led`、`builder-os` 或 `proof-first` 模板。
-7. 渲染独立 HTML 个人主页。
+7. 渲染独立 HTML 个人主页，并运行校验脚本确认输出来自 mjs renderer。
 
 ## 隐私原则
 

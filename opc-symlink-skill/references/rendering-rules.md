@@ -23,14 +23,19 @@ style changes:
 
 1. Update the metadata JSON.
 2. Run `scripts/render-homepage.mjs` with the same output HTML path.
-3. Inspect the generated HTML if practical.
-4. Return the metadata path and HTML path.
+3. Run `scripts/verify-homepage.mjs` against the metadata and HTML.
+4. Inspect the generated HTML if practical.
+5. Return the metadata path, HTML path, template, and verification result.
 
 Do not hand-edit generated HTML. Manual HTML edits will be overwritten by the
 next render and can make future revisions fail.
 
 Do not manually translate generated HTML. Translate the metadata entries in
 both `locales.zh-CN` and `locales.en`, then rerun the renderer.
+
+Do not create HTML as a fallback if rendering fails. Fix the metadata, template
+argument, language structure, or output path, then rerun the bundled renderer
+and verifier.
 
 ## Command Discipline
 
@@ -43,6 +48,15 @@ node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   --template product-led
 ```
 
+Then run verification as a separate command before telling the user the homepage
+is complete:
+
+```bash
+node /path/to/opc-symlink-skill/scripts/verify-homepage.mjs \
+  metadata.json \
+  personal-homepage.html
+```
+
 The renderer rejects single-language metadata by default. If and only if the
 user explicitly requested a single-language page, pass `--single-language`:
 
@@ -52,11 +66,16 @@ node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   personal-homepage.html \
   --template product-led \
   --single-language
+node /path/to/opc-symlink-skill/scripts/verify-homepage.mjs \
+  metadata.json \
+  personal-homepage.html \
+  --single-language
 ```
 
 Do not combine JSON creation, JSON editing, and rendering in one heredoc-heavy
 shell command. If metadata must be changed, edit the JSON file first, then run
-the renderer as a separate step.
+the renderer as a separate step, then run the verifier as another separate
+step.
 
 If old generated HTML variants already exist from experimentation, keep the
 latest intended output file and remove obsolete generated variants before final
@@ -71,6 +90,12 @@ delivery.
   only when the user explicitly requested a single-language page.
 - If rendering fails with a missing required field, update metadata fields:
   `identity.name`, `positioning.headline`, or `positioning.summary`.
+- If verification fails because the renderer marker is missing, regenerate HTML
+  with `scripts/render-homepage.mjs`; do not patch the HTML.
+- If verification fails because multiple generated HTML files exist, remove
+  obsolete generated variants or reuse the intended output path.
+- If verification fails because private strings are present, remove those
+  strings from public metadata fields and render again.
 - If rendering appears to time out, stop and check whether the previous command
   is waiting for heredoc input, a browser process, or another non-render step.
   The renderer itself is a short synchronous Node script.

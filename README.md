@@ -18,6 +18,8 @@ metadata, and renders a standalone personal homepage HTML file.
   products, proof, CTA, and privacy boundaries.
 - Produces AI builder profile metadata and a standalone single-page HTML
   homepage.
+- Verifies that the HTML came from the bundled mjs renderer instead of manual
+  HTML edits.
 - Supports three reusable templates: `product-led`, `builder-os`, and
   `proof-first`.
 - Generates bilingual Chinese/English output by default in one HTML file using
@@ -48,10 +50,12 @@ The renderer can also be called directly:
 
 ```bash
 node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
+node opc-symlink-skill/scripts/verify-homepage.mjs metadata.json homepage.html
 ```
 
 Single-language metadata is rejected by default. Use `--single-language` only
-when the user explicitly requests a single-language page.
+when the user explicitly requests a single-language page, and pass the same flag
+to the verifier.
 
 ## License
 

@@ -17,6 +17,25 @@ hypotheses, ask the user to confirm the direction and public boundary, then
 interview deeply enough to understand who they help, what pain they solve, what
 they can offer, and why a visitor should trust them.
 
+## Non-Negotiable Render Gate
+
+Do not deliver, claim completion, or describe the homepage as generated until
+you have run both of these commands as separate steps:
+
+```bash
+node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
+  metadata.json \
+  personal-homepage.html \
+  --template product-led
+node /path/to/opc-symlink-skill/scripts/verify-homepage.mjs \
+  metadata.json \
+  personal-homepage.html
+```
+
+If rendering or verification fails, fix the metadata or command usage and run
+the commands again. Do not create, patch, translate, or "quick fix" the HTML by
+hand as a fallback.
+
 ## Workflow
 
 1. Scan workspace context and recent memory.
@@ -33,8 +52,9 @@ they can offer, and why a visitor should trust them.
    separately under `locales.zh-CN` and `locales.en`. Only skip bilingual
    metadata if the user explicitly asks for a single-language homepage. Do not
    mix languages in the same visible copy block.
-8. Render the standalone HTML and deliver the HTML path, metadata path, and a
-   short note about assumptions or missing proof.
+8. Render and verify the standalone HTML using the bundled scripts, then
+   deliver the HTML path, metadata path, selected template, verification result,
+   and a short note about assumptions or missing proof.
 
 Source-of-truth rule: only modify metadata JSON when changing homepage content.
 Treat generated HTML as a disposable build artifact. Do not hand-edit generated
@@ -117,6 +137,14 @@ node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   --template product-led
 ```
 
+Immediately verify the rendered file:
+
+```bash
+node /path/to/opc-symlink-skill/scripts/verify-homepage.mjs \
+  metadata.json \
+  personal-homepage.html
+```
+
 Read `references/rendering-rules.md` before modifying an existing generated
 homepage.
 
@@ -131,14 +159,16 @@ Templates:
 
 The renderer creates a standalone HTML file with embedded CSS and metadata.
 When the user asks for changes, update the metadata JSON and run the renderer
-again as a separate command. Do not edit generated HTML directly and do not
-combine metadata writing plus rendering in one complex shell command.
+again as a separate command, then run the verifier. Do not edit generated HTML
+directly and do not combine metadata writing plus rendering in one complex shell
+command.
 
 Because the default metadata should include `locales.zh-CN` and `locales.en`,
 the renderer normally creates one HTML file with an in-page language switcher.
 If the user explicitly requested a single-language page and metadata only has
 one locale, pass `--single-language`; the renderer still localizes template UI
-labels based on `locale`.
+labels based on `locale`. Pass the same `--single-language` flag to the
+verifier.
 
 Keep only one final HTML file. Reuse and overwrite the same output path, such
 as `personal-homepage.html`, for every revision. Do not create `v2`, `new`,
@@ -159,6 +189,7 @@ Return:
 - The generated HTML file path.
 - The metadata JSON path.
 - The selected template.
+- The render and verification result.
 - A short note listing missing proof or assumptions.
 
 Prefer the user's language. If the user writes in Chinese, interview and write
