@@ -1,6 +1,7 @@
 import {
   accentColor,
   escapeHtml,
+  labelsFor,
   pageShell,
   renderButtons,
   renderList,
@@ -10,6 +11,7 @@ import {
 
 export function renderProofFirst(metadata) {
   const accent = accentColor(metadata, '#0f766e');
+  const t = labelsFor(metadata.locale);
   const links = [
     metadata.cta.primary,
     metadata.cta.secondary?.url ? metadata.cta.secondary : null,
@@ -165,7 +167,7 @@ li { padding: 14px 16px; }
 
   const testimonials = metadata.proof.testimonials
     .map((item) => {
-      return `<article class="card quote"><p>${escapeHtml(item.quote || '')}</p><h3>${escapeHtml(item.person || 'Public testimonial')}</h3><p>${escapeHtml(item.role || '')}</p></article>`;
+      return `<article class="card quote"><p>${escapeHtml(item.quote || '')}</p><h3>${escapeHtml(item.person || t.testimonials)}</h3><p>${escapeHtml(item.role || '')}</p></article>`;
     })
     .join('');
 
@@ -173,41 +175,41 @@ li { padding: 14px 16px; }
 <main class="page">
   <section class="hero">
     <div class="hero-card">
-      <p class="eyebrow">${escapeHtml(metadata.identity.title || 'AI builder')}</p>
+      <p class="eyebrow">${escapeHtml(metadata.identity.title || t.aiBuilder)}</p>
       <h1>${escapeHtml(metadata.identity.name)}</h1>
       <p>${escapeHtml(metadata.positioning.tagline || metadata.positioning.differentiator || '')}</p>
       <div class="buttons">${renderButtons(links)}</div>
       <div class="pills">${renderPills(metadata.positioning.keywords)}</div>
     </div>
     <div class="proof-card">
-      <p class="eyebrow">Proof-led profile</p>
+      <p class="eyebrow">${t.proofFirstProfile}</p>
       <h2>${escapeHtml(metadata.positioning.headline)}</h2>
       <p class="summary">${escapeHtml(metadata.positioning.summary)}</p>
       <p>${escapeHtml(metadata.audience.primary || '')}</p>
     </div>
   </section>
 
-  ${proofSummary.length ? `<section><p class="eyebrow">Proof summary</p><h2>Signals a stranger can trust.</h2>${renderList(proofSummary)}</section>` : ''}
-  ${metadata.proof.cases.length ? `<section><p class="eyebrow">Cases</p><h2>Problems, systems, and results.</h2><div class="grid">${renderNamedCards(metadata.proof.cases, { fallbackTitle: 'Case' })}</div></section>` : ''}
-  ${testimonials ? `<section><p class="eyebrow">Testimonials</p><h2>What others say.</h2><div class="grid">${testimonials}</div></section>` : ''}
-  ${metadata.offers.length ? `<section><p class="eyebrow">Offer</p><h2>How to work together.</h2><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
-  ${metadata.products.length ? `<section><p class="eyebrow">Products</p><h2>Public artifacts and tools.</h2><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
-  ${metadata.audience.painPoints.length || metadata.audience.desiredOutcomes.length ? `<section><p class="eyebrow">Audience fit</p><div class="grid"><article class="card"><h3>Pain</h3>${renderList(metadata.audience.painPoints)}</article><article class="card"><h3>Desired outcome</h3>${renderList(metadata.audience.desiredOutcomes)}</article><article class="card"><h3>Not for</h3>${renderList(metadata.audience.notFor)}</article></div></section>` : ''}
-  ${stack.length ? `<section><p class="eyebrow">Builder stack</p><h2>How the work gets delivered.</h2><div class="pills">${renderPills(stack)}</div></section>` : ''}
+  ${proofSummary.length ? `<section><p class="eyebrow">${t.proofSummary}</p><h2>${t.strangerTrust}</h2>${renderList(proofSummary)}</section>` : ''}
+  ${metadata.proof.cases.length ? `<section><p class="eyebrow">${t.cases}</p><h2>${t.reasonsToBelieve}</h2><div class="grid">${renderNamedCards(metadata.proof.cases, { fallbackTitle: t.cases })}</div></section>` : ''}
+  ${testimonials ? `<section><p class="eyebrow">${t.testimonials}</p><h2>${t.whatOthersSay}</h2><div class="grid">${testimonials}</div></section>` : ''}
+  ${metadata.offers.length ? `<section><p class="eyebrow">${t.offer}</p><h2>${t.waysWorkTogether}</h2><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
+  ${metadata.products.length ? `<section><p class="eyebrow">${t.products}</p><h2>${t.publicArtifacts}</h2><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
+  ${metadata.audience.painPoints.length || metadata.audience.desiredOutcomes.length ? `<section><p class="eyebrow">${t.audienceFit}</p><div class="grid"><article class="card"><h3>${t.pain}</h3>${renderList(metadata.audience.painPoints)}</article><article class="card"><h3>${t.desiredOutcome}</h3>${renderList(metadata.audience.desiredOutcomes)}</article><article class="card"><h3>${t.notFor}</h3>${renderList(metadata.audience.notFor)}</article></div></section>` : ''}
+  ${stack.length ? `<section><p class="eyebrow">${t.builderStack}</p><h2>${t.howWorkDelivered}</h2><div class="pills">${renderPills(stack)}</div></section>` : ''}
 
   <section>
-    <p class="eyebrow">Next step</p>
-    <h2>${escapeHtml(metadata.cta.primary.label || 'Book a conversation')}</h2>
-    <p>${escapeHtml(metadata.cta.note || 'Start with a focused conversation about your AI workflow, product, or delivery system.')}</p>
+    <p class="eyebrow">${t.nextStep}</p>
+    <h2>${escapeHtml(metadata.cta.primary.label || t.bookConversation)}</h2>
+    <p>${escapeHtml(metadata.cta.note || t.defaultProofCta)}</p>
     <div class="buttons">${renderButtons(links)}</div>
   </section>
 
-  <p class="footer">Generated from confirmed public packaging metadata.</p>
+  <p class="footer">${t.footer}</p>
 </main>`;
 
   return pageShell({
     metadata,
-    title: `${metadata.identity.name} - Proof`,
+    title: `${metadata.identity.name} - ${t.proof}`,
     description: metadata.positioning.summary,
     css,
     body,

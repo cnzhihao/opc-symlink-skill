@@ -2,6 +2,7 @@ import {
   accentColor,
   asArray,
   escapeHtml,
+  labelsFor,
   pageShell,
   renderButtons,
   renderList,
@@ -11,6 +12,7 @@ import {
 
 export function renderProductLed(metadata) {
   const accent = accentColor(metadata, '#2563eb');
+  const t = labelsFor(metadata.locale);
   const keywords = asArray(metadata.positioning.keywords);
   const primaryLinks = [
     metadata.cta.primary,
@@ -201,7 +203,7 @@ ul {
 <main class="page">
   <section class="hero">
     <div class="hero-copy">
-      <p class="kicker">${escapeHtml(metadata.identity.title || 'AI builder')}</p>
+      <p class="kicker">${escapeHtml(metadata.identity.title || t.aiBuilder)}</p>
       <h1>${escapeHtml(metadata.identity.name)}</h1>
       <p class="headline">${escapeHtml(metadata.positioning.headline)}</p>
       <p class="summary">${escapeHtml(metadata.positioning.summary)}</p>
@@ -211,34 +213,34 @@ ul {
     <aside class="panel audience-panel">
       ${metadata.identity.avatar ? `<img class="avatar" src="${escapeHtml(metadata.identity.avatar)}" alt="${escapeHtml(metadata.identity.name)}">` : ''}
       <div>
-        <p class="eyebrow">Best fit</p>
-        <h2>${escapeHtml(metadata.audience.primary || metadata.positioning.tagline || 'AI builders and operators who need leverage.')}</h2>
+        <p class="eyebrow">${t.bestFit}</p>
+        <h2>${escapeHtml(metadata.audience.primary || metadata.positioning.tagline || t.defaultAudience)}</h2>
         <p>${escapeHtml(metadata.cta.note || metadata.positioning.differentiator || '')}</p>
       </div>
-      ${metadata.audience.painPoints.length ? `<div><p class="eyebrow">Their pain</p>${renderList(metadata.audience.painPoints)}</div>` : ''}
+      ${metadata.audience.painPoints.length ? `<div><p class="eyebrow">${t.theirPain}</p>${renderList(metadata.audience.painPoints)}</div>` : ''}
     </aside>
   </section>
 
   <section class="split">
-    <div><p class="eyebrow">Transformation</p><h2>From manual work to useful AI systems.</h2></div>
+    <div><p class="eyebrow">${t.transformation}</p><h2>${t.transformationTitle}</h2></div>
     <div class="grid">
-      <article class="card"><h3>Before</h3><p>${escapeHtml(metadata.transformation.from || 'Scattered tools, slow processes, and unclear AI adoption.')}</p></article>
-      <article class="card"><h3>After</h3><p>${escapeHtml(metadata.transformation.to || 'A sharper workflow, product, or operating system that compounds.')}</p></article>
-      <article class="card"><h3>Mechanism</h3><p>${escapeHtml(metadata.transformation.mechanism || metadata.positioning.differentiator || 'AI agents, automation, product judgment, and technical delivery.')}</p></article>
+      <article class="card"><h3>${t.before}</h3><p>${escapeHtml(metadata.transformation.from || t.defaultTransformationBefore)}</p></article>
+      <article class="card"><h3>${t.after}</h3><p>${escapeHtml(metadata.transformation.to || t.defaultTransformationAfter)}</p></article>
+      <article class="card"><h3>${t.mechanisms}</h3><p>${escapeHtml(metadata.transformation.mechanism || metadata.positioning.differentiator || t.defaultMechanism)}</p></article>
     </div>
   </section>
 
-  ${metadata.offers.length ? `<section class="split"><div><p class="eyebrow">Offers</p><h2>Ways to work together.</h2></div><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
-  ${metadata.products.length ? `<section class="split"><div><p class="eyebrow">Products</p><h2>Things being built.</h2></div><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
-  ${proofItems.length ? `<section class="split"><div><p class="eyebrow">Proof</p><h2>Reasons to believe.</h2></div>${renderList(proofItems)}</section>` : ''}
-  ${stackItems.length ? `<section class="split"><div><p class="eyebrow">Builder stack</p><h2>How the work gets made.</h2></div><div class="pills">${renderPills(stackItems)}</div></section>` : ''}
+  ${metadata.offers.length ? `<section class="split"><div><p class="eyebrow">${t.offers}</p><h2>${t.waysWorkTogether}</h2></div><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
+  ${metadata.products.length ? `<section class="split"><div><p class="eyebrow">${t.products}</p><h2>${t.thingsBeingBuilt}</h2></div><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
+  ${proofItems.length ? `<section class="split"><div><p class="eyebrow">${t.proof}</p><h2>${t.reasonsToBelieve}</h2></div>${renderList(proofItems)}</section>` : ''}
+  ${stackItems.length ? `<section class="split"><div><p class="eyebrow">${t.builderStack}</p><h2>${t.howWorkMade}</h2></div><div class="pills">${renderPills(stackItems)}</div></section>` : ''}
 
   <section class="cta-band">
-    <div><p class="eyebrow">Next step</p><h2>${escapeHtml(metadata.cta.primary.label || 'Book a conversation')}</h2><p>${escapeHtml(metadata.cta.note || 'If this sounds like the problem you are trying to solve, start with a focused conversation.')}</p></div>
+    <div><p class="eyebrow">${t.nextStep}</p><h2>${escapeHtml(metadata.cta.primary.label || t.bookConversation)}</h2><p>${escapeHtml(metadata.cta.note || t.defaultCtaNote)}</p></div>
     <div class="buttons">${renderButtons(primaryLinks)}</div>
   </section>
 
-  <p class="footer">Generated from confirmed public packaging metadata.</p>
+  <p class="footer">${t.footer}</p>
 </main>`;
 
   return pageShell({

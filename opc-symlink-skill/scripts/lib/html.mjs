@@ -25,6 +25,184 @@ export function asArray(value) {
   return Array.isArray(value) ? value.filter(Boolean) : [];
 }
 
+export function localeKey(locale = 'en') {
+  return String(locale).toLowerCase().startsWith('zh') ? 'zh' : 'en';
+}
+
+const labelSets = {
+  en: {
+    after: 'After',
+    aiBuilder: 'AI builder',
+    audience: 'Audience',
+    audienceFit: 'Audience fit',
+    before: 'Before',
+    bestFit: 'Best fit',
+    bookConversation: 'Book a conversation',
+    builderOsTitle: 'AI builder operating system',
+    builderStack: 'Builder stack',
+    capabilities: 'Capabilities',
+    cases: 'Cases',
+    currentBuilds: 'Current builds',
+    defaultAudience: 'AI builders and operators who need leverage.',
+    defaultAudienceBuilderOs: 'Teams and founders building with AI.',
+    defaultCtaNote:
+      'If this sounds like the problem you are trying to solve, start with a focused conversation.',
+    defaultMechanism:
+      'AI agents, automation, product judgment, and technical delivery.',
+    defaultMechanismBuilderOs: 'Turns scattered AI ideas into working systems.',
+    defaultProofCta:
+      'Start with a focused conversation about your AI workflow, product, or delivery system.',
+    defaultTransformationAfter:
+      'A sharper workflow, product, or operating system that compounds.',
+    defaultTransformationBefore:
+      'Scattered tools, slow processes, and unclear AI adoption.',
+    desiredOutcome: 'Desired outcome',
+    footer: 'Generated from confirmed public packaging metadata.',
+    howWorkDelivered: 'How the work gets delivered.',
+    howWorkMade: 'How the work gets made.',
+    interfaces: 'Interfaces',
+    item: 'Item',
+    mechanisms: 'Mechanism',
+    nextStep: 'Next step',
+    notFor: 'Not for',
+    offer: 'Offer',
+    offers: 'Offers',
+    operatingBrief: 'Operating brief',
+    pain: 'Pain',
+    products: 'Products',
+    productsInMotion: 'Products and systems in motion.',
+    proof: 'Proof',
+    proofFirstProfile: 'Proof-led profile',
+    proofSummary: 'Proof summary',
+    publicArtifacts: 'Public artifacts and tools.',
+    publicItem: 'Public item',
+    publicLogs: 'Public logs',
+    reasonsToBelieve: 'Reasons to believe.',
+    stack: 'Stack',
+    strangerTrust: 'Signals a stranger can trust.',
+    testimonials: 'Testimonials',
+    theirPain: 'Their pain',
+    thingsBeingBuilt: 'Things being built.',
+    toolsModelsSurface: 'Tools, models, and technical surface area.',
+    transformation: 'Transformation',
+    transformationTitle: 'From manual work to useful AI systems.',
+    waysPlugIn: 'Ways to plug into the work.',
+    waysWorkTogether: 'Ways to work together.',
+    whatOthersSay: 'What others say.',
+    writingDemosArtifacts: 'Writing, demos, and artifacts.',
+  },
+  zh: {
+    after: '之后',
+    aiBuilder: 'AI 构建者',
+    audience: '目标客群',
+    audienceFit: '适合谁',
+    before: '之前',
+    bestFit: '最适合',
+    bookConversation: '预约沟通',
+    builderOsTitle: 'AI 构建者工作台',
+    builderStack: '构建栈',
+    capabilities: '能力',
+    cases: '案例',
+    currentBuilds: '正在构建',
+    defaultAudience: '需要 AI 杠杆的创造者和运营者。',
+    defaultAudienceBuilderOs: '正在用 AI 构建产品的团队和创始人。',
+    defaultCtaNote: '如果这正是你想解决的问题，可以先从一次聚焦沟通开始。',
+    defaultMechanism: 'AI 智能体、自动化、产品判断和技术交付。',
+    defaultMechanismBuilderOs: '把分散的 AI 想法变成能工作的系统。',
+    defaultProofCta: '从一次聚焦沟通开始，讨论你的 AI 工作流、产品或交付系统。',
+    defaultTransformationAfter: '一个更清晰、可复用、会持续复利的工作流或产品系统。',
+    defaultTransformationBefore: '分散的工具、重复的手工执行和不清晰的 AI 落地路径。',
+    desiredOutcome: '理想结果',
+    footer: '基于已确认的公开包装信息生成。',
+    howWorkDelivered: '这些能力如何被交付。',
+    howWorkMade: '这些系统如何被构建。',
+    interfaces: '合作接口',
+    item: '条目',
+    mechanisms: '方法',
+    nextStep: '下一步',
+    notFor: '不适合',
+    offer: '服务',
+    offers: '服务',
+    operatingBrief: '工作简报',
+    pain: '痛点',
+    products: '产品',
+    productsInMotion: '正在推进的产品和系统。',
+    proof: '可信证明',
+    proofFirstProfile: '可信证明优先',
+    proofSummary: '可信信号',
+    publicArtifacts: '公开作品和工具。',
+    publicItem: '公开内容',
+    publicLogs: '公开记录',
+    reasonsToBelieve: '为什么值得相信。',
+    stack: '技术栈',
+    strangerTrust: '陌生访客可以信任的信号。',
+    testimonials: '推荐语',
+    theirPain: '他们的痛点',
+    thingsBeingBuilt: '正在构建的东西。',
+    toolsModelsSurface: '工具、模型和技术能力边界。',
+    transformation: '转变',
+    transformationTitle: '从手工执行到可用的 AI 系统。',
+    waysPlugIn: '可以如何接入这项工作。',
+    waysWorkTogether: '可以如何合作。',
+    whatOthersSay: '别人怎么说。',
+    writingDemosArtifacts: '文章、演示和公开作品。',
+  },
+};
+
+export function labelsFor(locale = 'en') {
+  return labelSets[localeKey(locale)];
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function deepMerge(base, override) {
+  if (!isPlainObject(base) || !isPlainObject(override)) {
+    return override === undefined ? base : override;
+  }
+
+  const result = { ...base };
+
+  for (const [key, value] of Object.entries(override)) {
+    result[key] = isPlainObject(value)
+      ? deepMerge(result[key] || {}, value)
+      : value;
+  }
+
+  return result;
+}
+
+export function localizedRawMetadata(rawMetadata) {
+  const locales = rawMetadata.locales || rawMetadata.localizations;
+
+  if (!isPlainObject(locales) || !Object.keys(locales).length) {
+    return [{ locale: rawMetadata.locale || 'en', raw: rawMetadata }];
+  }
+
+  const base = { ...rawMetadata };
+  delete base.locales;
+  delete base.localizations;
+
+  const preferredOrder = ['zh-CN', 'zh', 'en'];
+
+  return Object.entries(locales)
+    .sort(([a], [b]) => {
+      const aIndex = preferredOrder.indexOf(a);
+      const bIndex = preferredOrder.indexOf(b);
+      return (
+        (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex) ||
+        a.localeCompare(b)
+      );
+    })
+    .map(([locale, localized]) => {
+      return {
+        locale,
+        raw: deepMerge(base, { ...localized, locale }),
+      };
+    });
+}
+
 export function normalizeTemplateName(value = '') {
   const template = String(value).trim().toLowerCase();
   const aliases = {
@@ -64,13 +242,15 @@ function legacyProducts(metadata) {
 }
 
 function legacyOffers(metadata) {
+  const labels = labelsFor(metadata.locale);
+
   return asArray(metadata.work?.services).map((item) => ({
     name: item.name || '',
     type: item.type || 'delivery',
     audience: item.audience || '',
     outcome: item.outcome || item.description || '',
     description: item.description || item.outcome || '',
-    ctaLabel: item.ctaLabel || 'Book a conversation',
+    ctaLabel: item.ctaLabel || labels.bookConversation,
     url: item.url || '',
   }));
 }
@@ -111,13 +291,14 @@ function normalizeLinks(metadata) {
 function normalizeCta(metadata, links) {
   const primary = metadata.cta?.primary || {};
   const fallback = links[0] || {};
+  const labels = labelsFor(metadata.locale);
 
   return {
     primary: {
       label:
         primary.label ||
         metadata.collaboration?.callToAction ||
-        'Book a conversation',
+        labels.bookConversation,
       url: primary.url || fallback.url || '',
     },
     secondary: metadata.cta?.secondary || {},
@@ -228,7 +409,9 @@ export function renderNamedCards(items = [], options = {}) {
 
   return cards
     .map((item) => {
-      const title = escapeHtml(item.name || item.title || options.fallbackTitle || 'Item');
+      const title = escapeHtml(
+        item.name || item.title || options.fallbackTitle || labelsFor().item,
+      );
       const eyebrow = item.status || item.type || item.audience || '';
       const body =
         item.value ||

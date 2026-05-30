@@ -6,9 +6,54 @@ optional fields rather than filling them with placeholders.
 The JSON is an internal implementation artifact. Ask the user to confirm the
 packaging direction and public boundary, not the raw JSON.
 
+Language rules:
+
+- Generate Chinese and English content as two separate metadata sets when the
+  user wants a multilingual homepage.
+- Put shared non-language-specific data at the top level.
+- Put localized copy under `locales.zh-CN` and `locales.en`.
+- Do not mix Chinese content with English template labels. The renderer
+  localizes template UI by locale.
+
 ```json
 {
   "locale": "zh-CN",
+  "locales": {
+    "zh-CN": {
+      "identity": {
+        "name": "公开姓名",
+        "title": "AI 构建者 / OPC 操作者"
+      },
+      "positioning": {
+        "headline": "我帮助 ... 构建 AI 系统",
+        "summary": "中文公开介绍",
+        "keywords": ["AI Agent", "自动化", "产品构建"]
+      },
+      "cta": {
+        "primary": {
+          "label": "预约沟通",
+          "url": "mailto:hello@example.com"
+        }
+      }
+    },
+    "en": {
+      "identity": {
+        "name": "Public name",
+        "title": "AI Builder / OPC Operator"
+      },
+      "positioning": {
+        "headline": "I build AI systems that help ...",
+        "summary": "English public introduction",
+        "keywords": ["AI agents", "automation", "product builder"]
+      },
+      "cta": {
+        "primary": {
+          "label": "Book a conversation",
+          "url": "mailto:hello@example.com"
+        }
+      }
+    }
+  },
   "identity": {
     "name": "Public name",
     "title": "AI builder / OPC operator",
@@ -124,6 +169,8 @@ packaging direction and public boundary, not the raw JSON.
 Validation rules:
 
 - Require `identity.name`, `positioning.headline`, and `positioning.summary`.
+- For multilingual homepages, require these fields inside each localized entry
+  in `locales`.
 - Prefer `cta.primary` for booking a conversation unless the user chooses
   another conversion goal.
 - Use arrays for repeatable content, even when there is only one item.

@@ -13,6 +13,7 @@
 - 生成 AI builder 个人主页 JSON 元数据。
 - 基于元数据渲染一个可直接打开的单页个人主页 HTML。
 - 支持三套可复用模板：`product-led`、`builder-os`、`proof-first`。
+- 当 metadata 提供 `locales.zh-CN` 和 `locales.en` 时，在一个 HTML 文件里生成中英双语版本，并提供语言切换。
 
 ## 安装
 

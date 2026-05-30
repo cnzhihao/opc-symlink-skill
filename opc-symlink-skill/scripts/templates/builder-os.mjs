@@ -2,6 +2,7 @@ import {
   accentColor,
   asArray,
   escapeHtml,
+  labelsFor,
   pageShell,
   renderButtons,
   renderList,
@@ -11,6 +12,7 @@ import {
 
 export function renderBuilderOs(metadata) {
   const accent = accentColor(metadata, '#14b8a6');
+  const t = labelsFor(metadata.locale);
   const links = [
     metadata.cta.primary,
     metadata.cta.secondary?.url ? metadata.cta.secondary : null,
@@ -184,7 +186,7 @@ li { padding: 14px 16px; }
 <main class="page">
   <nav class="topbar">
     <strong>${escapeHtml(metadata.identity.name)}</strong>
-    <span class="status">${escapeHtml(metadata.identity.title || 'AI builder operating system')}</span>
+    <span class="status">${escapeHtml(metadata.identity.title || t.builderOsTitle)}</span>
   </nav>
   <section class="hero">
     <div class="terminal">
@@ -195,24 +197,24 @@ li { padding: 14px 16px; }
       <div class="pills">${renderPills(metadata.positioning.keywords)}</div>
     </div>
     <aside class="side">
-      <div class="panel"><p class="eyebrow">Audience</p><h2>${escapeHtml(metadata.audience.primary || 'Teams and founders building with AI.')}</h2><p>${escapeHtml(metadata.cta.note || '')}</p></div>
-      <div class="panel"><p class="eyebrow">Transformation</p><p>${escapeHtml(metadata.transformation.mechanism || metadata.positioning.differentiator || 'Turns scattered AI ideas into working systems.')}</p></div>
-      ${capabilities.length ? `<div class="panel"><p class="eyebrow">Capabilities</p><div class="pills">${renderPills(capabilities)}</div></div>` : ''}
+      <div class="panel"><p class="eyebrow">${t.audience}</p><h2>${escapeHtml(metadata.audience.primary || t.defaultAudienceBuilderOs)}</h2><p>${escapeHtml(metadata.cta.note || '')}</p></div>
+      <div class="panel"><p class="eyebrow">${t.transformation}</p><p>${escapeHtml(metadata.transformation.mechanism || metadata.positioning.differentiator || t.defaultMechanismBuilderOs)}</p></div>
+      ${capabilities.length ? `<div class="panel"><p class="eyebrow">${t.capabilities}</p><div class="pills">${renderPills(capabilities)}</div></div>` : ''}
     </aside>
   </section>
 
-  ${metadata.products.length ? `<section><p class="eyebrow">Current builds</p><h2>Products and systems in motion.</h2><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
-  ${metadata.offers.length ? `<section><p class="eyebrow">Interfaces</p><h2>Ways to plug into the work.</h2><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
-  ${systemSignals.length ? `<section><p class="eyebrow">Stack</p><h2>Tools, models, and technical surface area.</h2><div class="pills">${renderPills(systemSignals)}</div></section>` : ''}
-  ${metadata.audience.painPoints.length || metadata.audience.desiredOutcomes.length ? `<section><p class="eyebrow">Operating brief</p><div class="grid"><article class="card"><h3>Pain</h3>${renderList(metadata.audience.painPoints)}</article><article class="card"><h3>Desired outcome</h3>${renderList(metadata.audience.desiredOutcomes)}</article><article class="card"><h3>Not for</h3>${renderList(metadata.audience.notFor)}</article></div></section>` : ''}
-  ${featured.length ? `<section><p class="eyebrow">Public logs</p><h2>Writing, demos, and artifacts.</h2><div class="grid">${renderNamedCards(featured, { fallbackTitle: 'Public item' })}</div></section>` : ''}
+  ${metadata.products.length ? `<section><p class="eyebrow">${t.currentBuilds}</p><h2>${t.productsInMotion}</h2><div class="grid">${renderNamedCards(metadata.products)}</div></section>` : ''}
+  ${metadata.offers.length ? `<section><p class="eyebrow">${t.interfaces}</p><h2>${t.waysPlugIn}</h2><div class="grid">${renderNamedCards(metadata.offers)}</div></section>` : ''}
+  ${systemSignals.length ? `<section><p class="eyebrow">${t.stack}</p><h2>${t.toolsModelsSurface}</h2><div class="pills">${renderPills(systemSignals)}</div></section>` : ''}
+  ${metadata.audience.painPoints.length || metadata.audience.desiredOutcomes.length ? `<section><p class="eyebrow">${t.operatingBrief}</p><div class="grid"><article class="card"><h3>${t.pain}</h3>${renderList(metadata.audience.painPoints)}</article><article class="card"><h3>${t.desiredOutcome}</h3>${renderList(metadata.audience.desiredOutcomes)}</article><article class="card"><h3>${t.notFor}</h3>${renderList(metadata.audience.notFor)}</article></div></section>` : ''}
+  ${featured.length ? `<section><p class="eyebrow">${t.publicLogs}</p><h2>${t.writingDemosArtifacts}</h2><div class="grid">${renderNamedCards(featured, { fallbackTitle: t.publicItem })}</div></section>` : ''}
 
-  <p class="footer">Generated from confirmed public packaging metadata.</p>
+  <p class="footer">${t.footer}</p>
 </main>`;
 
   return pageShell({
     metadata,
-    title: `${metadata.identity.name} - Builder OS`,
+    title: `${metadata.identity.name} - ${t.builderOsTitle}`,
     description: metadata.positioning.summary,
     css,
     body,
