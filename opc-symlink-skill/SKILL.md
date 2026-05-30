@@ -124,6 +124,11 @@ When the user asks for changes, update the metadata JSON and run the renderer
 again as a separate command. Do not edit generated HTML directly and do not
 combine metadata writing plus rendering in one complex shell command.
 
+Keep only one final HTML file. Reuse and overwrite the same output path, such
+as `personal-homepage.html`, for every revision. Do not create `v2`, `new`,
+`final`, timestamped, or template-specific HTML copies unless the user
+explicitly asks for multiple deliverables.
+
 If the user asks to integrate with an existing frontend repository, adapt the
 content to that stack instead of using the standalone renderer.
 
