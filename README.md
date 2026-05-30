@@ -50,6 +50,9 @@ The renderer can also be called directly:
 node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
 ```
 
+Single-language metadata is rejected by default. Use `--single-language` only
+when the user explicitly requests a single-language page.
+
 ## License
 
 GNU Affero General Public License v3.0 only. See `LICENSE`.

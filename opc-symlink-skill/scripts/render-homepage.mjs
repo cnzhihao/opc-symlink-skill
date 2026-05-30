@@ -22,9 +22,15 @@ const templates = {
 function parseArgs(argv) {
   const positional = [];
   let template = '';
+  let allowSingleLanguage = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
+
+    if (arg === '--single-language') {
+      allowSingleLanguage = true;
+      continue;
+    }
 
     if (arg === '--template' || arg === '-t') {
       template = argv[index + 1] || '';
@@ -46,19 +52,34 @@ function parseArgs(argv) {
     inputPath: positional[0],
     outputPath: positional[1] || 'personal-homepage.html',
     template,
+    allowSingleLanguage,
   };
 }
 
-const { inputPath, outputPath, template } = parseArgs(process.argv.slice(2));
+const { inputPath, outputPath, template, allowSingleLanguage } = parseArgs(
+  process.argv.slice(2),
+);
 
 if (!inputPath) {
   console.error(
-    'Usage: node render-homepage.mjs metadata.json [output.html] --template product-led|builder-os|proof-first',
+    'Usage: node render-homepage.mjs metadata.json [output.html] --template product-led|builder-os|proof-first [--single-language]',
   );
   process.exit(1);
 }
 
 const rawMetadata = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
+const hasLocalizedMetadata =
+  rawMetadata.locales &&
+  rawMetadata.locales['zh-CN'] &&
+  rawMetadata.locales.en;
+
+if (!hasLocalizedMetadata && !allowSingleLanguage) {
+  console.error(
+    'Bilingual metadata is required by default. Add locales.zh-CN and locales.en, or pass --single-language only when the user explicitly requested a single-language page.',
+  );
+  process.exit(1);
+}
+
 const localizedInputs = localizedRawMetadata(rawMetadata);
 const localizedMetadata = localizedInputs.map((item) => {
   return normalizeMetadata(item.raw);

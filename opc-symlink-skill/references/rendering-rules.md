@@ -43,6 +43,17 @@ node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   --template product-led
 ```
 
+The renderer rejects single-language metadata by default. If and only if the
+user explicitly requested a single-language page, pass `--single-language`:
+
+```bash
+node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
+  metadata.json \
+  personal-homepage.html \
+  --template product-led \
+  --single-language
+```
+
 Do not combine JSON creation, JSON editing, and rendering in one heredoc-heavy
 shell command. If metadata must be changed, edit the JSON file first, then run
 the renderer as a separate step.
@@ -55,6 +66,9 @@ delivery.
 
 - If rendering fails with "Missing template", pass `--template product-led`,
   `--template builder-os`, or `--template proof-first`.
+- If rendering fails with "Bilingual metadata is required", add
+  `locales.zh-CN` and `locales.en` to the metadata. Use `--single-language`
+  only when the user explicitly requested a single-language page.
 - If rendering fails with a missing required field, update metadata fields:
   `identity.name`, `positioning.headline`, or `positioning.summary`.
 - If rendering appears to time out, stop and check whether the previous command

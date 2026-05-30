@@ -48,6 +48,9 @@ Use $opc-symlink-skill to interview me and create a single-page personal card ho
 node opc-symlink-skill/scripts/render-homepage.mjs metadata.json homepage.html --template product-led
 ```
 
+渲染器默认会拒绝单语 metadata。只有当用户明确要求单语页面时，才使用
+`--single-language`。
+
 ## 工作流程
 
 1. 扫描当前工作区里的上下文线索和最近 3 个月 memory。

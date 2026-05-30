@@ -137,7 +137,8 @@ combine metadata writing plus rendering in one complex shell command.
 Because the default metadata should include `locales.zh-CN` and `locales.en`,
 the renderer normally creates one HTML file with an in-page language switcher.
 If the user explicitly requested a single-language page and metadata only has
-one locale, the renderer still localizes template UI labels based on `locale`.
+one locale, pass `--single-language`; the renderer still localizes template UI
+labels based on `locale`.
 
 Keep only one final HTML file. Reuse and overwrite the same output path, such
 as `personal-homepage.html`, for every revision. Do not create `v2`, `new`,
