@@ -1,10 +1,12 @@
 #!/usr/bin/env node
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
   escapeHtml,
   localizedRawMetadata,
   normalizeMetadata,
+  RENDER_FINGERPRINT_PLACEHOLDER,
 } from './lib/html.mjs';
 import {
   formatCopyLimitErrors,
@@ -152,6 +154,30 @@ const hasBilingualMetadata = Boolean(
 if (!html.includes(marker)) {
   fail(
     'HTML does not contain the renderer marker. Recreate it with scripts/render-homepage.mjs instead of hand-editing HTML.',
+  );
+}
+
+const fingerprintPattern =
+  /(<meta\s+name="opc-symlink-render-fingerprint"\s+content=")([a-f0-9]{64})(">)/i;
+const fingerprintMatch = html.match(fingerprintPattern);
+
+if (!fingerprintMatch) {
+  fail(
+    'HTML does not contain a valid render fingerprint. Recreate it with scripts/render-homepage.mjs.',
+  );
+}
+
+const fingerprintSource = html.replace(
+  fingerprintPattern,
+  `$1${RENDER_FINGERPRINT_PLACEHOLDER}$3`,
+);
+const expectedFingerprint = createHash('sha256')
+  .update(`${JSON.stringify(metadata)}\n${fingerprintSource}`, 'utf8')
+  .digest('hex');
+
+if (fingerprintMatch[2].toLowerCase() !== expectedFingerprint) {
+  fail(
+    'HTML render fingerprint does not match the metadata and generated output. Re-render from metadata instead of editing the HTML.',
   );
 }
 

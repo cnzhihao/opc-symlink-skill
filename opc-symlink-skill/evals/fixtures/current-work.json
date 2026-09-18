@@ -1,0 +1,28 @@
+{
+  "updatedAt": "2026-08-26",
+  "headline": "Shipping the next workflow release",
+  "summary": "A new public update submitted through the Current Work channel.",
+  "status": {
+    "availability": "selective",
+    "note": "Open to one focused collaboration."
+  },
+  "items": [
+    {
+      "id": "workflow-kit",
+      "title": "Workflow release",
+      "summary": "Packaging the next reusable workflow release.",
+      "status": "shipping",
+      "updatedAt": "2026-08-26",
+      "tags": ["AI", "release"]
+    }
+  ],
+  "updates": [
+    {
+      "id": "release-note",
+      "date": "2026-08-26",
+      "title": "Submitted the release update",
+      "summary": "This update is waiting for Dashboard review.",
+      "relatedItemId": "workflow-kit"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "positioning",
+  "title": "Clarify the positioning",
+  "summary": "Use a more concise public headline.",
+  "affectedPaths": ["positioning.headline", "positioning.summary"],
+  "affectedSections": ["positioning"],
+  "proposedPatch": {
+    "positioning": {
+      "headline": "Turn AI ideas into shipped systems",
+      "summary": "I help teams turn scattered AI ideas into products and workflows that can be tested, shipped, and operated."
+    }
+  }
+}

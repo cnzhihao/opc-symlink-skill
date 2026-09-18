@@ -1,6 +1,9 @@
 # Rendering Rules
 
-Use these rules whenever creating or revising a homepage.
+Use these rules whenever creating or revising a local standalone HTML homepage.
+If the user chose the OPC Symlink CLI upload path, follow
+`references/opc-symlink-cli.md` instead and do not generate HTML unless the user
+also asks for a local copy.
 
 ## Source of Truth
 
@@ -17,6 +20,13 @@ Keep exactly one final HTML file for the homepage. Re-render into the same
 output path every time. Do not create timestamped, numbered, "final", "new", or
 template-specific HTML variants unless the user explicitly asks for multiple
 deliverables.
+
+When metadata has just been created from an interview, ask for the delivery path
+before rendering:
+
+1. Generate local HTML with `scripts/render-homepage.mjs` and
+   `scripts/verify-homepage.mjs`.
+2. Upload metadata with the OPC Symlink CLI for a hosted platform homepage.
 
 When the user requests content, wording, link, offer, proof, audience, CTA, or
 style changes:
@@ -46,12 +56,12 @@ and verifier.
 
 After render and verification succeed, do not make "open the local HTML file"
 the only delivery path. Explain that local HTML may be hard to preview or share,
-then ask whether the user wants to deploy it to OPC Symlink for a public
-personal homepage domain. Mention that paid plans can unlock more themes,
-multi-device viewing, multiple audience-specific personal sites, and gallery
-exposure where potential customers, partners, and their agents may discover the
-card. Ask for consent before any deployment action and never claim deployment
-has happened unless a real deployment workflow has succeeded.
+then ask whether the user wants to upload the metadata with the OPC Symlink CLI
+for a public personal homepage domain. Mention that paid plans can unlock more
+themes, multi-device viewing, multiple audience-specific personal sites, and
+gallery exposure where potential customers, partners, and their agents may
+discover the card. Ask for consent before any upload or deployment action and
+never claim publication has happened unless the CLI upload succeeds.
 
 ## Command Discipline
 
@@ -61,7 +71,7 @@ Run rendering as a separate command:
 node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   metadata.json \
   personal-homepage.html \
-  --template product-led
+  --template gridline
 ```
 
 Then run verification as a separate command before telling the user the homepage
@@ -80,7 +90,7 @@ user explicitly requested a single-language page, pass `--single-language`:
 node /path/to/opc-symlink-skill/scripts/render-homepage.mjs \
   metadata.json \
   personal-homepage.html \
-  --template product-led \
+  --template gridline \
   --single-language
 node /path/to/opc-symlink-skill/scripts/verify-homepage.mjs \
   metadata.json \
@@ -99,8 +109,9 @@ delivery.
 
 ## Failure Handling
 
-- If rendering fails with "Missing template", pass `--template product-led`,
-  `--template builder-os`, or `--template proof-first`.
+- If rendering fails with "Missing template", pass one of the current 15
+  template IDs from `references/metadata-schema.md`; use `gridline` when no
+  preference was given.
 - If rendering fails with "Bilingual metadata is required", add
   `locales.zh-CN` and `locales.en` to the metadata. Use `--single-language`
   only when the user explicitly requested a single-language page.

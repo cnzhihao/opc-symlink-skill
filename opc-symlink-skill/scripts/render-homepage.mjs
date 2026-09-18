@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import {
   escapeHtml,
@@ -7,21 +8,23 @@ import {
   localizedRawMetadata,
   localeKey,
   normalizeMetadata,
-  normalizeTemplateName,
+  RENDER_FINGERPRINT_PLACEHOLDER,
 } from './lib/html.mjs';
+import {
+  DEFAULT_TEMPLATE_ID,
+  HOSTED_TEMPLATE_IDS,
+  normalizeTemplateName,
+  templateListText,
+} from './lib/templates.mjs';
 import {
   formatCopyLimitErrors,
   validateMetadataCopy,
 } from './lib/copy-limits.mjs';
-import { renderBuilderOs } from './templates/builder-os.mjs';
-import { renderProductLed } from './templates/product-led.mjs';
-import { renderProofFirst } from './templates/proof-first.mjs';
+import { renderPortfolio } from './templates/portfolio.mjs';
 
-const templates = {
-  'product-led': renderProductLed,
-  'builder-os': renderBuilderOs,
-  'proof-first': renderProofFirst,
-};
+const templates = Object.fromEntries(
+  HOSTED_TEMPLATE_IDS.map((templateId) => [templateId, renderPortfolio]),
+);
 
 function parseArgs(argv) {
   const positional = [];
@@ -66,7 +69,7 @@ const { inputPath, outputPath, template, allowSingleLanguage } = parseArgs(
 
 if (!inputPath) {
   console.error(
-    'Usage: node render-homepage.mjs metadata.json [output.html] --template product-led|builder-os|proof-first [--single-language]',
+    `Usage: node render-homepage.mjs metadata.json [output.html] --template ${templateListText()} [--single-language]`,
   );
   process.exit(1);
 }
@@ -98,12 +101,12 @@ if (copyErrors.length) {
 }
 
 const selectedTemplate = normalizeTemplateName(
-  template || localizedMetadata[0]?.style.template,
+  template || localizedMetadata[0]?.style.template || DEFAULT_TEMPLATE_ID,
 );
 
 if (!selectedTemplate) {
   console.error(
-    'Missing template. Choose --template product-led, --template builder-os, --template proof-first, or set style.template in metadata.',
+    `Missing template. Choose one of: ${templateListText()}.`,
   );
   process.exit(1);
 }
@@ -112,7 +115,7 @@ const render = templates[selectedTemplate];
 
 if (!render) {
   console.error(
-    `Unknown template "${selectedTemplate}". Expected product-led, builder-os, or proof-first.`,
+    `Unknown template "${selectedTemplate}". Expected one of: ${templateListText()}.`,
   );
   process.exit(1);
 }
@@ -164,6 +167,7 @@ function renderMultilingualHtml(pages) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title}</title>
   <meta name="description" content="${description}">
+  <meta name="opc-symlink-render-fingerprint" content="${RENDER_FINGERPRINT_PLACEHOLDER}">
   <style>${style}
 .language-switcher {
   position: fixed;
@@ -244,13 +248,20 @@ function renderMultilingualHtml(pages) {
 const renderedPages = localizedMetadata.map((metadata) => {
   return {
     locale: metadata.locale,
-    html: render(metadata),
+    html: render(metadata, selectedTemplate),
   };
 });
-const html =
+const unfingerprintedHtml =
   renderedPages.length > 1
     ? renderMultilingualHtml(renderedPages)
     : renderedPages[0].html;
+const fingerprint = createHash('sha256')
+  .update(`${JSON.stringify(rawMetadata)}\n${unfingerprintedHtml}`, 'utf8')
+  .digest('hex');
+const html = unfingerprintedHtml.replace(
+  RENDER_FINGERPRINT_PLACEHOLDER,
+  fingerprint,
+);
 const resolvedOutput = path.resolve(outputPath);
 const resolvedInput = path.resolve(inputPath);
 

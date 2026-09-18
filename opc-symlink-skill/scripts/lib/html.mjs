@@ -1,3 +1,7 @@
+import { normalizeTemplateName } from './templates.mjs';
+
+export { normalizeTemplateName };
+
 export function escapeHtml(value = '') {
   return String(value)
     .replaceAll('&', '&amp;')
@@ -10,15 +14,23 @@ export function escapeHtml(value = '') {
 export function safeUrl(value = '') {
   const url = String(value || '').trim();
 
-  if (!url) {
+  if (!url || /[\u0000-\u001f\u007f]/.test(url)) {
     return '';
   }
 
-  if (/^(https?:|mailto:|tel:)/i.test(url)) {
+  if (/^(mailto:|tel:)/i.test(url)) {
     return url;
   }
 
-  return `https://${url}`;
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      return new URL(url).hostname ? url : '';
+    } catch {
+      return '';
+    }
+  }
+
+  return '';
 }
 
 export function asArray(value) {
@@ -43,6 +55,9 @@ const labelSets = {
     capabilities: 'Capabilities',
     cases: 'Cases',
     collaborationInterfaces: 'Collaboration interfaces',
+    currentWork: 'Current Work',
+    currentWorkDefault: 'What I am working on now',
+    currentWorkUpdates: 'Recent updates',
     currentBuilds: 'Current builds',
     defaultAudience: 'AI builders and operators who need leverage.',
     defaultAudienceBuilderOs: 'Teams and founders building with AI.',
@@ -59,6 +74,10 @@ const labelSets = {
       'Scattered tools, slow processes, and unclear AI adoption.',
     desiredOutcome: 'Desired outcome',
     footer: 'Generated from confirmed public packaging metadata.',
+    historyExport: 'export available',
+    historyLongTerm: 'long-term retention',
+    historyRetention: 'day retention',
+    historyVisible: 'visible',
     howWorkDelivered: 'How the work gets delivered.',
     howWorkMade: 'How the work gets made.',
     interfaces: 'Interfaces',
@@ -74,6 +93,7 @@ const labelSets = {
     productsInMotion: 'Products and systems in motion.',
     proof: 'Proof',
     proofFirstProfile: 'Proof-led profile',
+    proofEvidence: 'Evidence with a name, a problem, and a result.',
     proofSignals: 'Public signals',
     proofSummary: 'Proof summary',
     publicArtifacts: 'Public artifacts and tools.',
@@ -106,6 +126,9 @@ const labelSets = {
     capabilities: '能力',
     cases: '案例',
     collaborationInterfaces: '合作接口',
+    currentWork: '当前工作',
+    currentWorkDefault: '正在做什么',
+    currentWorkUpdates: '最近更新',
     currentBuilds: '正在构建',
     defaultAudience: '需要 AI 杠杆的创造者和运营者。',
     defaultAudienceBuilderOs: '正在用 AI 构建产品的团队和创始人。',
@@ -113,10 +136,16 @@ const labelSets = {
     defaultMechanism: 'AI 智能体、自动化、产品判断和技术交付。',
     defaultMechanismBuilderOs: '把分散的 AI 想法变成能工作的系统。',
     defaultProofCta: '从一次聚焦沟通开始，讨论你的 AI 工作流、产品或交付系统。',
-    defaultTransformationAfter: '一个更清晰、可复用、会持续复利的工作流或产品系统。',
-    defaultTransformationBefore: '分散的工具、重复的手工执行和不清晰的 AI 落地路径。',
+    defaultTransformationAfter:
+      '一个更清晰、可复用、会持续复利的工作流或产品系统。',
+    defaultTransformationBefore:
+      '分散的工具、重复的手工执行和不清晰的 AI 落地路径。',
     desiredOutcome: '理想结果',
     footer: '基于已确认的公开包装信息生成。',
+    historyExport: '可导出',
+    historyLongTerm: '长期保留',
+    historyRetention: '天保留',
+    historyVisible: '条可见',
     howWorkDelivered: '这些能力如何被交付。',
     howWorkMade: '这些系统如何被构建。',
     interfaces: '合作接口',
@@ -132,6 +161,7 @@ const labelSets = {
     productsInMotion: '正在推进的产品和系统。',
     proof: '可信证明',
     proofFirstProfile: '可信证明优先',
+    proofEvidence: '带着名称、问题与结果的证据。',
     proofSignals: '公开信号',
     proofSummary: '可信信号',
     publicArtifacts: '公开作品和工具。',
@@ -207,26 +237,9 @@ export function localizedRawMetadata(rawMetadata) {
     });
 }
 
-export function normalizeTemplateName(value = '') {
-  const template = String(value).trim().toLowerCase();
-  const aliases = {
-    product: 'product-led',
-    'product-led': 'product-led',
-    productled: 'product-led',
-    builder: 'builder-os',
-    'builder-os': 'builder-os',
-    builderos: 'builder-os',
-    proof: 'proof-first',
-    'proof-first': 'proof-first',
-    prooffirst: 'proof-first',
-  };
-
-  return aliases[template] || template;
-}
-
 function requireText(object, pathName) {
   const value = pathName.split('.').reduce((current, key) => {
-    return current && current[key];
+    return current?.[key];
   }, object);
 
   if (!String(value || '').trim()) {
@@ -331,9 +344,7 @@ export function normalizeMetadata(metadata) {
     positioning: metadata.positioning || {},
     audience: {
       primary:
-        metadata.audience?.primary ||
-        metadata.collaboration?.bestFit ||
-        '',
+        metadata.audience?.primary || metadata.collaboration?.bestFit || '',
       segments: asArray(metadata.audience?.segments),
       painPoints: asArray(metadata.audience?.painPoints),
       desiredOutcomes: asArray(metadata.audience?.desiredOutcomes),
@@ -347,7 +358,7 @@ export function normalizeMetadata(metadata) {
       tools: asArray(metadata.builderStack?.tools),
       agentCapabilities: asArray(metadata.builderStack?.agentCapabilities),
       automationCapabilities: asArray(
-        metadata.builderStack?.automationCapabilities,
+        metadata.builderStack?.automationCapabilities
       ),
       technicalTags: asArray(metadata.builderStack?.technicalTags),
     },
@@ -355,6 +366,9 @@ export function normalizeMetadata(metadata) {
       featured: asArray(metadata.content?.featured),
       links,
     },
+    currentWork: isPlainObject(metadata.currentWork)
+      ? metadata.currentWork
+      : undefined,
     cta,
     style: metadata.style || {},
   };
@@ -420,7 +434,7 @@ export function renderNamedCards(items = [], options = {}) {
   return cards
     .map((item) => {
       const title = escapeHtml(
-        item.name || item.title || options.fallbackTitle || labelsFor().item,
+        item.name || item.title || options.fallbackTitle || labelsFor().item
       );
       const eyebrow = item.status || item.type || item.audience || '';
       const rawBody =
@@ -431,9 +445,10 @@ export function renderNamedCards(items = [], options = {}) {
         item.problem ||
         '';
       const plainTitle = item.name || item.title || options.fallbackTitle || '';
-      const body = String(rawBody || '').trim() === String(plainTitle || '').trim()
-        ? ''
-        : rawBody;
+      const body =
+        String(rawBody || '').trim() === String(plainTitle || '').trim()
+          ? ''
+          : rawBody;
       const url = safeUrl(item.url || '');
       const titleHtml = url
         ? `<a href="${escapeHtml(url)}" target="_blank" rel="noreferrer">${title}</a>`
@@ -442,6 +457,264 @@ export function renderNamedCards(items = [], options = {}) {
       return `<article class="card">${eyebrow ? `<p class="eyebrow">${escapeHtml(eyebrow)}</p>` : ''}<h3>${titleHtml}</h3>${body ? `<p>${escapeHtml(body)}</p>` : ''}</article>`;
     })
     .join('');
+}
+
+function hasCurrentWorkContent(currentWork) {
+  if (!isPlainObject(currentWork)) {
+    return false;
+  }
+
+  return Boolean(
+    currentWork.headline ||
+      currentWork.summary ||
+      currentWork.status?.label ||
+      currentWork.status?.note ||
+      (currentWork.items && currentWork.items.length > 0) ||
+      (currentWork.updates && currentWork.updates.length > 0)
+  );
+}
+
+function renderCurrentWorkLinks(links = []) {
+  const rendered = asArray(links)
+    .map((link) => {
+      const url = safeUrl(link?.url || '');
+
+      if (!url) {
+        return '';
+      }
+
+      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label || url)}</a>`;
+    })
+    .filter(Boolean)
+    .join('');
+
+  return rendered ? `<div class="current-work-links">${rendered}</div>` : '';
+}
+
+function renderCurrentWorkHistory(currentWork, t) {
+  const history = currentWork.history;
+
+  if (!isPlainObject(history)) {
+    return '';
+  }
+
+  const parts = [
+    history.visibleCount === undefined
+      ? ''
+      : `${history.visibleCount} ${t.historyVisible}`,
+    history.retentionDays
+      ? `${history.retentionDays} ${t.historyRetention}`
+      : t.historyLongTerm,
+    history.exportAvailable ? t.historyExport : '',
+  ].filter(Boolean);
+
+  return `<p class="current-work-history">${escapeHtml(t.currentWork)}: ${escapeHtml(parts.join(' / '))}</p>`;
+}
+
+export function renderCurrentWorkSection(metadata) {
+  const currentWork = metadata.currentWork;
+
+  if (!hasCurrentWorkContent(currentWork)) {
+    return '';
+  }
+
+  const t = labelsFor(metadata.locale);
+  const items = asArray(currentWork.items);
+  const updates = asArray(currentWork.updates);
+  const statusLabel =
+    currentWork.status?.label || currentWork.status?.availability || '';
+
+  return `<section class="current-work-section" id="current-work">
+  <div class="current-work-shell">
+    <p class="eyebrow">${t.currentWork}</p>
+    <h2>${escapeHtml(currentWork.headline || t.currentWorkDefault)}</h2>
+    ${currentWork.summary ? `<p class="current-work-summary">${escapeHtml(currentWork.summary)}</p>` : ''}
+    ${
+      statusLabel || currentWork.status?.note
+        ? `<div class="current-work-status">
+      ${statusLabel ? `<span>${escapeHtml(statusLabel)}</span>` : ''}
+      ${currentWork.status?.note ? `<p>${escapeHtml(currentWork.status.note)}</p>` : ''}
+    </div>`
+        : ''
+    }
+    ${
+      items.length
+        ? `<div class="current-work-grid">
+      ${items
+        .map((item) => {
+          const title = item?.title || t.currentWork;
+          const body = item?.summary || '';
+          const tags = asArray(item?.tags)
+            .map((tag) => `<span>${escapeHtml(tag)}</span>`)
+            .join('');
+
+          return `<article class="current-work-card">
+  <div class="current-work-card-top">
+    <h3>${escapeHtml(title)}</h3>
+    ${item?.status ? `<span>${escapeHtml(item.status)}</span>` : ''}
+  </div>
+  ${body ? `<p>${escapeHtml(body)}</p>` : ''}
+  ${tags ? `<div class="current-work-tags">${tags}</div>` : ''}
+  ${renderCurrentWorkLinks(item?.links)}
+</article>`;
+        })
+        .join('')}
+    </div>`
+        : ''
+    }
+    ${
+      updates.length
+        ? `<div class="current-work-updates">
+      <h3>${t.currentWorkUpdates}</h3>
+      ${updates
+        .map((update) => {
+          return `<article class="current-work-update">
+  <time>${escapeHtml(update?.date || '')}</time>
+  <div>
+    <h4>${escapeHtml(update?.title || t.currentWork)}</h4>
+    ${update?.summary ? `<p>${escapeHtml(update.summary)}</p>` : ''}
+    ${renderCurrentWorkLinks(update?.links)}
+  </div>
+</article>`;
+        })
+        .join('')}
+    </div>`
+        : ''
+    }
+    ${renderCurrentWorkHistory(currentWork, t)}
+  </div>
+</section>`;
+}
+
+export function currentWorkStyles() {
+  return `
+.current-work-section {
+  border-top: 1px solid var(--line, #dfe4ec);
+  padding: 44px 0;
+}
+.current-work-shell {
+  display: grid;
+  gap: 0;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.current-work-summary {
+  color: var(--muted, #5d6675);
+  font-size: 18px;
+  margin: 16px 0 0;
+  max-width: 760px;
+}
+.current-work-status {
+  align-items: center;
+  border-bottom: 1px solid var(--line, #dfe4ec);
+  border-top: 1px solid var(--line, #dfe4ec);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 22px;
+  padding: 14px 0;
+}
+.current-work-status span {
+  background: var(--accent, #2563eb);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+.current-work-status p {
+  color: var(--muted, #5d6675);
+  margin: 0;
+}
+.current-work-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: 28px;
+}
+.current-work-card {
+  background: var(--paper, var(--panel, #fff));
+  border: 1px solid var(--line, #dfe4ec);
+  border-radius: 8px;
+  min-width: 0;
+  padding: 18px;
+}
+.current-work-card-top {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+.current-work-card h3,
+.current-work-updates h3,
+.current-work-update h4 {
+  color: var(--ink, #101522);
+  letter-spacing: 0;
+  line-height: 1.2;
+  margin: 0;
+}
+.current-work-card-top span {
+  background: var(--ink, #101522);
+  border-radius: 999px;
+  color: #fff;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+.current-work-card p,
+.current-work-update p {
+  color: var(--muted, #5d6675);
+  margin: 10px 0 0;
+}
+.current-work-tags,
+.current-work-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.current-work-tags span {
+  background: color-mix(in srgb, var(--accent, #2563eb) 12%, transparent);
+  border-radius: 999px;
+  color: var(--ink, #101522);
+  font-size: 12px;
+  padding: 3px 8px;
+}
+.current-work-links a {
+  color: var(--ink, #101522);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+.current-work-updates {
+  margin-top: 36px;
+}
+.current-work-updates > h3 {
+  font-size: 18px;
+  margin-bottom: 14px;
+}
+.current-work-update {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 120px minmax(0, 1fr);
+  padding: 16px 0;
+  border-top: 1px solid var(--line, #dfe4ec);
+}
+.current-work-update time {
+  color: var(--accent, #2563eb);
+  font-size: 13px;
+  font-weight: 750;
+}
+.current-work-history {
+  color: var(--muted, #5d6675);
+  font-size: 13px;
+  margin: 28px 0 0;
+}
+@media (max-width: 640px) {
+  .current-work-update { grid-template-columns: 1fr; gap: 4px; }
+}
+`;
 }
 
 export function renderJsonLd(metadata) {
@@ -459,8 +732,13 @@ export function renderJsonLd(metadata) {
     url: safeUrl(firstUrl) || undefined,
   };
 
-  return JSON.stringify(json);
+  return JSON.stringify(json)
+    .replaceAll('&', '\\u0026')
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e');
 }
+
+export const RENDER_FINGERPRINT_PLACEHOLDER = '__OPC_SYMLINK_FINGERPRINT__';
 
 export function pageShell({ metadata, title, description, css, body }) {
   return `<!doctype html>
@@ -474,6 +752,7 @@ export function pageShell({ metadata, title, description, css, body }) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}">
+  <meta name="opc-symlink-render-fingerprint" content="${RENDER_FINGERPRINT_PLACEHOLDER}">
   <style>${css}</style>
   <script type="application/ld+json">${renderJsonLd(metadata)}</script>
 </head>

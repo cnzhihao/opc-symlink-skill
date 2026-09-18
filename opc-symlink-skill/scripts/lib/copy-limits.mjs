@@ -32,6 +32,18 @@ const copyLimits = {
   'cta.primary.label': { zh: 8, en: 22 },
   'cta.secondary.label': { zh: 8, en: 22 },
   'cta.note': { zh: 36, en: 90 },
+  'currentWork.headline': { zh: 28, en: 70 },
+  'currentWork.summary': { zh: 90, en: 180 },
+  'currentWork.status.label': { zh: 18, en: 40 },
+  'currentWork.status.note': { zh: 36, en: 90 },
+  'currentWork.items[].title': { zh: 24, en: 52 },
+  'currentWork.items[].summary': { zh: 80, en: 180 },
+  'currentWork.items[].tags[]': { zh: 12, en: 28 },
+  'currentWork.items[].links[].label': { zh: 18, en: 40 },
+  'currentWork.updates[].date': { zh: 24, en: 40 },
+  'currentWork.updates[].title': { zh: 28, en: 70 },
+  'currentWork.updates[].summary': { zh: 90, en: 180 },
+  'currentWork.updates[].links[].label': { zh: 18, en: 40 },
 };
 
 function charCount(value) {
@@ -40,7 +52,7 @@ function charCount(value) {
 
 function pathValue(object, pathName) {
   return pathName.split('.').reduce((current, key) => {
-    return current && current[key];
+    return current?.[key];
   }, object);
 }
 
@@ -76,13 +88,7 @@ function addScalarError(errors, metadata, rulePath, actualPath, value) {
 
 function validateArray(errors, metadata, rulePath, arrayPath) {
   asArray(pathValue(metadata, arrayPath)).forEach((item, index) => {
-    addScalarError(
-      errors,
-      metadata,
-      rulePath,
-      `${arrayPath}[${index}]`,
-      item,
-    );
+    addScalarError(errors, metadata, rulePath, `${arrayPath}[${index}]`, item);
   });
 }
 
@@ -93,8 +99,49 @@ function validateObjectArray(errors, metadata, rulePath, arrayPath, field) {
       metadata,
       rulePath,
       `${arrayPath}[${index}].${field}`,
-      item?.[field],
+      item?.[field]
     );
+  });
+}
+
+function validateNestedArray(
+  errors,
+  metadata,
+  rulePath,
+  arrayPath,
+  nestedField
+) {
+  asArray(pathValue(metadata, arrayPath)).forEach((item, index) => {
+    asArray(item?.[nestedField]).forEach((value, nestedIndex) => {
+      addScalarError(
+        errors,
+        metadata,
+        rulePath,
+        `${arrayPath}[${index}].${nestedField}[${nestedIndex}]`,
+        value
+      );
+    });
+  });
+}
+
+function validateNestedObjectArray(
+  errors,
+  metadata,
+  rulePath,
+  arrayPath,
+  nestedField,
+  field
+) {
+  asArray(pathValue(metadata, arrayPath)).forEach((item, index) => {
+    asArray(item?.[nestedField]).forEach((nestedItem, nestedIndex) => {
+      addScalarError(
+        errors,
+        metadata,
+        rulePath,
+        `${arrayPath}[${index}].${nestedField}[${nestedIndex}].${field}`,
+        nestedItem?.[field]
+      );
+    });
   });
 }
 
@@ -115,13 +162,17 @@ export function validateMetadataCopy(metadata) {
     'cta.primary.label',
     'cta.secondary.label',
     'cta.note',
+    'currentWork.headline',
+    'currentWork.summary',
+    'currentWork.status.label',
+    'currentWork.status.note',
   ].forEach((rulePath) => {
     addScalarError(
       errors,
       metadata,
       rulePath,
       rulePath,
-      pathValue(metadata, rulePath),
+      pathValue(metadata, rulePath)
     );
   });
 
@@ -147,9 +198,38 @@ export function validateMetadataCopy(metadata) {
     ['proof.cases[].name', 'proof.cases', 'name'],
     ['proof.cases[].problem', 'proof.cases', 'problem'],
     ['proof.cases[].result', 'proof.cases', 'result'],
+    ['currentWork.items[].title', 'currentWork.items', 'title'],
+    ['currentWork.items[].summary', 'currentWork.items', 'summary'],
+    ['currentWork.updates[].date', 'currentWork.updates', 'date'],
+    ['currentWork.updates[].title', 'currentWork.updates', 'title'],
+    ['currentWork.updates[].summary', 'currentWork.updates', 'summary'],
   ].forEach(([rulePath, arrayPath, field]) => {
     validateObjectArray(errors, metadata, rulePath, arrayPath, field);
   });
+
+  validateNestedArray(
+    errors,
+    metadata,
+    'currentWork.items[].tags[]',
+    'currentWork.items',
+    'tags'
+  );
+  validateNestedObjectArray(
+    errors,
+    metadata,
+    'currentWork.items[].links[].label',
+    'currentWork.items',
+    'links',
+    'label'
+  );
+  validateNestedObjectArray(
+    errors,
+    metadata,
+    'currentWork.updates[].links[].label',
+    'currentWork.updates',
+    'links',
+    'label'
+  );
 
   return errors;
 }
