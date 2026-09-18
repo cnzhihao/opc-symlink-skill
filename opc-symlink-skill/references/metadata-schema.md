@@ -15,6 +15,26 @@ Language rules:
 - Put localized copy under `locales.zh-CN` and `locales.en`.
 - Do not mix Chinese content with English template labels. The renderer
   localizes template UI by locale.
+- The current OPC Symlink template IDs are shared by the website, CLI, and
+  bundled local renderer: `gridline`, `split-signal`, `cozy-archive`,
+  `handwritten`, `quiet-product`, `fireline`, `tile-playground`,
+  `night-director`, `pattern-field`, `continuous-axis`, `three-column`,
+  `pixel-arcade`, `copy-collage`, `ink-hover`, and `grainy-lab`.
+- Use the exact template ID in `style.template` and in
+  `opc-symlink upload --template`. Do not use aliases or stale template names.
+- To get the current template list at runtime instead of relying on this
+  document, run `opc-symlink templates` (CLI ≥ 0.3.1) or fetch
+  `GET https://opcsymlink.com/api/templates` (login-free JSON with
+  `templates[].id`, `default`, and `notes`). If the list cannot be obtained,
+  omit `style.template` entirely — the platform falls back to its default
+  template; never guess an ID.
+- Top-level visible copy (the blocks outside `locales`: `identity`,
+  `positioning`, `audience`, `transformation`, `offers`, `products`, `proof`,
+  `builderStack`, `content`, `cta`) is validated as the English fallback:
+  it must not contain CJK (Chinese/Japanese/Korean) characters. The renderer
+  rejects it with `contains Chinese/Japanese/Korean characters in the English
+  locale`. Write the top-level blocks in English and put Chinese copy in
+  `locales.zh-CN`.
 - English locale visible copy must not contain Chinese sentences. Translate or
   transliterate names, products, proof, offers, and audience text.
 
@@ -43,6 +63,17 @@ Visible copy budgets:
 | `cta.primary.label` | 8 | 22 |
 | `cta.secondary.label` | 8 | 22 |
 | `cta.note` | 36 | 90 |
+| `currentWork.headline` | 28 | 70 |
+| `currentWork.summary` | 90 | 180 |
+| `currentWork.status.label` | 18 | 40 |
+| `currentWork.status.note` | 36 | 90 |
+| `currentWork.items[].title` | 24 | 52 |
+| `currentWork.items[].summary` | 80 | 180 |
+| `currentWork.items[].tags[]` | 12 | 28 |
+| `currentWork.updates[].date` | 24 | 40 |
+| `currentWork.updates[].title` | 28 | 70 |
+| `currentWork.updates[].summary` | 90 | 180 |
+| `currentWork.*.links[].label` | 18 | 40 |
 | `positioning.keywords[]` | 12 | 28 |
 
 If a field is too long, rewrite metadata before rendering. Do not rely on HTML
@@ -175,6 +206,37 @@ wrapping or truncation to fix overlong copy.
       }
     ]
   },
+  "currentWork": {
+    "updatedAt": "2026-08-26",
+    "headline": "What I am working on now",
+    "summary": "A short public description of the current focus.",
+    "status": {
+      "label": "Selective",
+      "availability": "selective",
+      "note": "Open to two focused projects."
+    },
+    "items": [
+      {
+        "id": "project-id",
+        "title": "Project or system",
+        "summary": "What is being built or operated.",
+        "status": "building",
+        "updatedAt": "2026-08-26",
+        "tags": ["AI", "automation"],
+        "links": [{ "label": "Read more", "url": "https://example.com" }]
+      }
+    ],
+    "updates": [
+      {
+        "id": "update-id",
+        "date": "2026-08-26",
+        "title": "Shipped a public milestone",
+        "summary": "A short update that is safe to publish.",
+        "relatedItemId": "project-id",
+        "links": []
+      }
+    ]
+  },
   "cta": {
     "primary": {
       "label": "Book a conversation",
@@ -187,9 +249,9 @@ wrapping or truncation to fix overlong copy.
     "note": "Best next step for qualified visitors"
   },
   "style": {
-    "template": "product-led|builder-os|proof-first",
+    "template": "gridline",
     "voice": "sharp|warm|technical|editorial|premium",
-    "visualMood": "product-led, credible, modern",
+    "visualMood": "editorial, credible, modern",
     "accentColor": "#2563eb"
   },
   "privacy": {
@@ -214,6 +276,18 @@ Validation rules:
   `proof.testimonials`, and `proof.credibility`.
 - Keep visible copy within the budgets above. The renderer and verifier fail
   hard on overlong copy instead of truncating it.
+- Every non-empty URL must be a full URL with an `http://`, `https://`,
+  `mailto:`, or `tel:` scheme. Bare domains such as `example.com` are not
+  valid hosted metadata; normalize them before rendering or upload.
+- `style.template` must be one of the 15 current template IDs above. The same
+  ID is passed to the local renderer and the hosted CLI. An unsupported name
+  must fail loudly instead of falling back to another design.
+- `currentWork.status.availability` must be one of `open`, `selective`, `busy`,
+  or `closed`; item status must be one of `exploring`, `building`, `shipping`,
+  `operating`, or `paused`.
+- `currentWork.history` is server-maintained metadata. Agents should normally
+  omit it from update files; the website fills visibility, retention, and export
+  fields when a suggestion is applied.
 - Keep `privacy.exclude` and `privacy.approvalNotes` out of rendered HTML.
 - Legacy metadata with `work.products`, `work.services`,
   `proof.publicHighlights`, and top-level `links` may be rendered as fallback,
